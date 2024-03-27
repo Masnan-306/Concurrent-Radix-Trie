@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distributed Trie Project Proposal</title>
+</head>
+<body>
+    <h1>Distributed Trie Project Proposal</h1>
+    <p><em>Implementations of Parallel Trie and Measurement of their Performance</em></p>
+    <p><strong>Team Members</strong>: Sam Wang, Jake Wen</p>
+    
+    <h2>URL</h2>
+    <p><a href="https://masnan-306.github.io/masnan.github.io/webpage.md">Project Web Page URL</a></p>
+    
+    <h2>SUMMARY</h2>
+    <p>In this project, we plan to implement versions of parallel trie data structure with different programming models including Cuda and OpenMPI as well as with the lock-free variant. Also, we plan to benchmark their performances by measuring throughput and scalability.</p>
+    
+    <h2>BACKGROUND</h2>
+    <p>The evolution of large-scale, data-intensive applications in domains such as distributed databases, real-time content retrieval, and networking has magnified the need for efficient data storage and retrieval systems. Tries, especially Patricia tries, have emerged as a favorable data structure for their ability to facilitate rapid searches, insertions, and deletions.</p>
+    
+    <p>However, a significant challenge lies in the synchronization overhead when tries are adapted to distributed systems. Traditional lock-based synchronization mechanisms introduce bottlenecks that impair system scalability and degrade performance. This project proposes the research and implementation of a lock-free distributed trie (alternatively, a distributed Patricia trie), leveraging non-blocking synchronization methods to mitigate the issues associated with locks when exploiting distributed computing.</p>
+    
+    <p>The key component of the application is the concurrent operations on the trie data structure, which includes node insertion, deletion, and search operations that correspond to database update, remove, and query functions. The structure of the Patricia trie itself inherently benefits from parallelism—updates to different parts of the trie can occur independently without interference if no common prefixes are involved. This will be exploited in our distributing approach that partitions the trie based on distinct key values and communicates them among different work node with OpenMPI.</p>
+    
+    <p>The proposed lock-free approach will likely benefit from parallelism in several aspects:</p>
+    <ol>
+        <li>Node-level Operations: Individual nodes within the trie can be modified concurrently without the need for locking the entire structure, thus enabling high parallelism for write-heavy workloads.</li>
+        <li>Read-Write Separation: Read operations, which are typically more frequent, can be performed concurrently with write operations.</li>
+        <li>Horizontal Scalability: By distributing the trie across multiple nodes, we can horizontally scale the system. Each node operates independently, which makes adding more nodes to the system a way to linearly increase the capacity and throughput.</li>
+    </ol>
+    
+    <p>Lastly, we plan to explore CUDA to accelerates bulk lookups and inserts conducted on a trie data structure. leveraging CUDA to implement trie data structures presents a transformative opportunity for accelerating bulk operations. This parallelism is particularly beneficial for applications involving large-scale data, like big data analytics, where millions of keys may need to be inserted or looked up in the trie concurrently.</p>
+    
+    <h2>THE CHALLENGE</h2>
+    <p>The main challenges in this project include (describe the challenges, e.g., "parallelizing the computation to effectively utilize GPU architectures"). We expect to learn (state what you hope to learn, e.g., "how to manage data dependencies and memory access patterns to optimize parallel execution").</p>
+    <ul>
+        <li><strong>Workload</strong>: (Discuss dependencies, memory access characteristics, and whether there's divergent execution.)</li>
+        <li><strong>Constraints</strong>: (Describe the system properties that make mapping the workload challenging.)</li>
+    </ul>
+    
+    <h2>RESOURCES</h2>
+    <ul>
+        <li><a href="https://github.com/purehyperbole/rad">Lock-free Radix Trie</a></li>
+        <li><a href="https://stackoverflow.com/questions/68420953/trie-structure-lock-free-inserting">Lock-free Insertions</a></li>
+        <li><a href="https://arxiv.org/abs/1809.04923">Distributed Trie</a></li>
+        <li><a href="https://developer.nvidia.com/blog/cuda-turing-new-gpu-compute-possibilities/">Cuda Acceleration</a></li>
+    </ul>
+
+    <h2>GOALS AND DELIVERABLES</h2>
+    <p><strong>Plan to Achieve</strong>:</p>
+    <p>(List the goals you must achieve for a successful project and the expected grade.)</p>
+
+    <p><strong>Hope to Achieve</strong>:</p>
+    <p>(List additional goals for if the project progresses better than expected.)</p>
+
+    <p><strong>Demo</strong>:</p>
+    <p>(Describe what you plan to demo, such as "an interactive visualization of fluid dynamics simulations").</p>
+
+    <p><strong>Analysis Projects</strong>:</p>
+    <p>(State the questions you aim to answer through your analysis.)</p>
+
+    <p><strong>System Projects</strong>:</p>
+    <p>(Describe the capabilities and performance targets of the system you're developing.)</p>
+
+    <h2>PLATFORM CHOICE</h2>
+    <p>We chose (describe the platform, such as "NVIDIA GPUs and CUDA programming") because (explain why this platform is suitable for your project, considering the specific requirements and characteristics of your workload).</p>
+
+    <h2>SCHEDULE</h2>
+    <p>(Provide a week-by-week schedule of your project tasks leading up to the parallelism competition. Include at least one task per week and note how you will adapt your schedule based on progress. Highlight key milestones.)</p>
+    <ul>
+        <li><strong>Week 1</strong>: Task 1</li>
+        <li><strong>Week 2</strong>: Task 2</li>
+        <li>...</li>
+        <li><strong>Intermediate Milestone (April 16th)</strong>: (Describe the milestone.)</li>
+    </ul>
+
+    <footer>
+        <p>Project Proposal by Sam Wang and Jake Wen</p>
+    </footer>
+</body>
+</html>
+
