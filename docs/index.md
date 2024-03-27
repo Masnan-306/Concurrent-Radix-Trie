@@ -66,7 +66,6 @@ We also hope to achieve:
 We plan to demonstrate our outcomes in speedup graphs and also graphs on other metrics that shed light into the improvement of scalability and capacity of data the system can hold.
 
 **Analysis Projects**:
-- Performance Benchmarking: How does each implementation of the trie (sequential, lock-based distributed, lock-free, and lock-free distributed) perform under various workloads? This includes measuring throughput, latency, and scalability under high contention scenarios and heavy read or write workloads.
 
 - Lock-Free Mechanism Evaluation: How effective are lock-free mechanisms in reducing the overhead associated with synchronization in distributed systems, specifically in the context of trie operations? We will compare the performance of lock-free tries against traditional lock-based approaches to understand the trade-offs in complexity and performance.
 
