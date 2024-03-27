@@ -76,13 +76,6 @@ We plan to demonstrate our outcomes in speedup graphs and also graphs on other m
 
 - Memory Access Patterns and Optimization: How do trie data structures' memory access patterns influence performance, and what optimizations can mitigate any negative impacts? This analysis will include looking at spatial and temporal locality, as well as the effects of hardware cache utilization.
 
-**System Projects**:
-
-- Sequential Patricia Trie Implementation: Develop a baseline sequential version of the Patricia trie for benchmark comparison. Performance targets include optimizing for speed and memory efficiency in a single-threaded context.
-- Distributed Patricia Trie with Locks: Implement a distributed version of the Patricia trie using traditional lock-based synchronization methods. The performance targets here are to achieve scalable throughput with minimal contention overhead.
-- Lock-Free Patricia Trie: Design and implement a lock-free version of the Patricia trie, focusing on reducing synchronization overhead and avoiding contention hotspots. The performance goal is to surpass the lock-based version in terms of throughput and scalability under contention.
-- Lock-Free and Distributed Trie with Partitions Among Nodes: Create a distributed, lock-free Patricia trie that partitions the trie structure among multiple nodes to exploit parallelism. The primary performance targets are to achieve near-linear scalability with increasing nodes and to maintain high throughput under mixed workloads.
-
 ## PLATFORM CHOICE
 
 We will implement the trie data structure in C++ and develop the benchmark scripts in Python. Experiments will be conducted on GHC machines. If time permnits, we will also experiment on PSC machines because it can easily scale from 1 core to 256 cores allowing for more comprehensive study into the performance of the data structure when scaling to larger systems. 
