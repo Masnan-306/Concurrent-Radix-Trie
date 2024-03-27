@@ -102,6 +102,7 @@ We will implement the trie data structure in C++ and develop the benchmark scrip
 - Start the implementation of the lock-free version of the Patricia trie, emphasizing non-blocking synchronization mechanisms suitable for parallel computing environments.
 - Continue the development of parallel test and benchmark suites specifically designed to measure the performance impact of eliminating locks.
 - Assess initial performance data from the distributed trie implementation to refine and adjust development strategies.
+- Milestone Report
 
 4. **Week of April 22**: Introduction of CUDA Acceleration and Advanced Parallel Techniques
 - Explore CUDA acceleration for key trie operations, especially focusing on bulk insertions and lookups that can benefit from GPU parallelism.
