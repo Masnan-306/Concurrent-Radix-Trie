@@ -6,7 +6,9 @@
 
 ## URL
 
-[Project Web Page URL](https://masnan-306.github.io/masnan.github.io/webpage.md)
+[Project Web Page URL](https://masnan-306.github.io/masnan.github.io)
+
+[Source Code](https://github.com/Masnan-306/masnan.github.io)
 
 ## SUMMARY
 
@@ -29,10 +31,12 @@ Lastly, we plan to explore CUDA to accelerates bulk lookups and inserts conducte
 
 ## THE CHALLENGE
 
-The main challenges in this project include (describe the challenges, e.g., "parallelizing the computation to effectively utilize GPU architectures"). We expect to learn (state what you hope to learn, e.g., "how to manage data dependencies and memory access patterns to optimize parallel execution").
+The main challenges in this project includes:
 
-- **Workload**: (Discuss dependencies, memory access characteristics, and whether there's divergent execution.)
-- **Constraints**: (Describe the system properties that make mapping the workload challenging.)
+1) We need to correctly implement the locks on the data structure such that the critical sections are  protected. Otherwise, concurrent lookups or insertions may lead to a corrupted data structure.
+2) Lock-free trie is challenging to implement because we would need to understand the underlying machine instructions and apply complex techniques to ensure atomicity.
+3) Achieving a linear speedup is hard because the trie does not provide good spacial locality for memory accessing. We would also need to do research to form a good strategy of diving the workload among processes. A trie can usually be skewed in a application setting, demanding careful load balance techniques to scale.
+4) Since the data structure can evolve dynamically over updates including insertions and deletions, we need to implement rebalancing mechanisms to distribute work among processes.
 
 ## RESOURCES
 
@@ -44,13 +48,22 @@ The main challenges in this project include (describe the challenges, e.g., "par
 ## GOALS AND DELIVERABLES
 
 **Plan to Achieve**:
-- (List the goals you must achieve for a successful project and the expected grade.)
+
+We expect to successfully implement the following:
+  1. sequential patricia trie & large workload test cases
+  2. distributed patricia trie with locks
+  3. lock-free patricia trie
+  4. lock-free and distributed trie with partitions among nodes
 
 **Hope to Achieve**:
-- (List additional goals for if the project progresses better than expected.)
+
+We also hope to achieve:
+  1. linear speedup on look-up intensive workloads
+  2. efficient implementations of cuda functions that accelerate bulk insertions
 
 **Demo**:
-- (Describe what you plan to demo, such as "an interactive visualization of fluid dynamics simulations").
+
+We plan to demonstrate our outcomes in speedup graphs and also graphs on other metrics that shed light into the improvement of scalability and capacity of data the system can hold.
 
 **Analysis Projects**:
 - (State the questions you aim to answer through your analysis.)
