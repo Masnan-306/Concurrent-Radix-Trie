@@ -87,7 +87,7 @@ We will implement the trie data structure in C++ and develop the benchmark scrip
 
 2. **Week of April 8**: Parallel Implementation of Distributed Trie with Locks
 - Implement the basic structure of the distributed Patricia trie with a focus on parallel operations using lock-based synchronization. Utilize OpenMPI for managing communication between distributed nodes.
-- Develop parallel test cases to evaluate the functionality and preliminary performance of the distributed trie.
+- Develop test cases to evaluate the functionality and preliminary performance of the distributed trie.
 - Begin benchmarking to understand scalability and identify optimization points.
 
 3. **Week of April 15**: Development of Lock-Free Trie for Parallel Environments
