@@ -1,37 +1,80 @@
 #include "PatriciaTree.h"
-#include <iostream>
 
 void PatriciaTree::insert(const std::string &key) {
-    insertRec(root, key, 0);
+    root = insertRec(root, key);
 }
 
-void PatriciaTree::insertRec(std::shared_ptr<PatriciaNode>& node, const std::string& key, size_t bitIndex) {
-    if (bitIndex >= key.length() * 8) {
-        node->isEndOfWord = true;
-        return;
+std::shared_ptr<PatriciaNode> PatriciaTree::insertRec(std::shared_ptr<PatriciaNode> node, const std::string &key) {
+    if (node == nullptr) {
+        auto newNode = std::make_shared<PatriciaNode>(key);
+        newNode->isTerminal = true;
+        return newNode;
     }
-    
-    char bit = key[bitIndex / 8]; // Get the character containing the bit
-    if (node->children.find(bit) == node->children.end()) {
-        node->children[bit] = std::make_shared<PatriciaNode>(key.substr(bitIndex / 8));
+
+    // Find the longest common prefix
+    int commonLength = 0;
+    int minLen = std::min(node->key.length(), key.length());
+    while (commonLength < minLen && node->key[commonLength] == key[commonLength]) {
+        commonLength++;
     }
-    
-    insertRec(node->children[bit], key, bitIndex + 8); // Move to next character
+
+    if (commonLength == node->key.length()) {
+        // The entire key of the node is a prefix of the inserted key
+        if (commonLength == key.length()) {
+            node->isTerminal = true; // The whole key matches the node key
+        } else {
+            std::string newKey = key.substr(commonLength);
+            node->children.push_back(insertRec(nullptr, newKey));
+        }
+    } else {
+        // Split the node
+        auto splitNode = std::make_shared<PatriciaNode>(node->key.substr(commonLength));
+        splitNode->children = std::move(node->children);
+        splitNode->isTerminal = node->isTerminal;
+
+        node->key = key.substr(0, commonLength);
+        node->children.clear();
+        node->children.push_back(splitNode);
+
+        if (commonLength == key.length()) {
+            node->isTerminal = true;
+        } else {
+            std::string newKey = key.substr(commonLength);
+            node->children.push_back(insertRec(nullptr, newKey));
+        }
+        node->isTerminal = false;
+    }
+
+    return node;
 }
 
-bool PatriciaTree::find(const std::string &key) const {
-    return findRec(root, key, 0);
+bool PatriciaTree::search(const std::string& key) const {
+    return searchRec(root, key);
 }
 
-bool PatriciaTree::findRec(std::shared_ptr<PatriciaNode>& node, const std::string& key, size_t bitIndex) const {
-    if (bitIndex >= key.length() * 8) {
-        return node->isEndOfWord;
-    }
+bool PatriciaTree::searchRec(const std::shared_ptr<PatriciaNode>& node, const std::string& key) const {
+    if (node == nullptr) return false;
     
-    char bit = key[bitIndex / 8];
-    if (node->children.find(bit) == node->children.end()) {
-        return false;
+    int commonLength = 0;
+    int minLen = std::min(node->key.length(), key.length());
+    while (commonLength < minLen && node->key[commonLength] == key[commonLength]) {
+        commonLength++;
     }
 
-    return findRec(node->children[bit], key, bitIndex + 8);
+    if (commonLength == key.length() && commonLength == node->key.length() && node->isTerminal) {
+        return true; // Full match
+    }
+
+    if (commonLength < node->key.length() || commonLength == key.length()) {
+        return false; // Partial match, but not complete
+    }
+
+    std::string newKey = key.substr(commonLength);
+    for (auto& child : node->children) {
+        if (searchRec(child, newKey)) {
+            return true;
+        }
+    }
+
+    return false;
 }
