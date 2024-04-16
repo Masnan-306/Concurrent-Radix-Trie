@@ -79,30 +79,42 @@ We plan to demonstrate our outcomes in speedup graphs and also graphs on other m
 
 We will implement the trie data structure in C++ and develop the benchmark scripts in Python. Experiments will be conducted on GHC machines. If time permnits, we will also experiment on PSC machines because it can easily scale from 1 core to 256 cores allowing for more comprehensive study into the performance of the data structure when scaling to larger systems. 
 
-## SCHEDULE
+## PAST SCHEDULE
 
 1. **Week of April 1**: Project Setup, Initial Research, and Design Planning
-- Deep dive into parallel algorithms literature, with a focus on parallel trie structures, lock-free synchronization, and CUDA acceleration techniques.
-- Draft comprehensive design plans for parallel implementations of the Patricia trie: distributed version with locks, lock-free version, and an outline for CUDA-accelerated operations.
+- Deeped dive into algroithm for Trie, Redix Trie, and PATRICIA(Practical Algorithm to Retrieve Information Coded in Alphanumeric) Trie.
+- Discussed on parallel implementations of the Patricia trie: distributed version with locks and lock-free version.
 
-2. **Week of April 8**: Parallel Implementation of Distributed Trie with Locks
-- Implement the basic structure of the distributed Patricia trie with a focus on parallel operations using lock-based synchronization. Utilize OpenMPI for managing communication between distributed nodes.
-- Develop test cases to evaluate the functionality and preliminary performance of the distributed trie.
-- Begin benchmarking to understand scalability and identify optimization points.
+2. **Week of April 8**: Sequential Implementation of Redix Trie and Patricia Trie
+- Implemented the basic structure of sequential version of Redix trie.
+- Developed test cases to evaluate the correctness of the trie.
+- Further studied on Patricia Trie data structure and algorithm, and implemented the basic structure of sequential version of patricia trie.
 
-3. **Week of April 15**: Development of Lock-Free Trie for Parallel Environments
-- Start the implementation of the lock-free version of the Patricia trie, emphasizing non-blocking synchronization mechanisms suitable for parallel computing environments.
-- Continue the development of parallel test and benchmark suites specifically designed to measure the performance impact of eliminating locks.
-- Assess initial performance data from the distributed trie implementation to refine and adjust development strategies.
-- Milestone Report
 
-4. **Week of April 22**: Introduction of CUDA Acceleration and Advanced Parallel Techniques
-- Explore CUDA acceleration for key trie operations, especially focusing on bulk insertions and lookups that can benefit from GPU parallelism.
-- Finalize and benchmark the lock-free implementation, including any necessary refinements based on performance analysis.
-- Start integrating CUDA-accelerated operations into the trie implementations where applicable.
+## FUTURE SCHEDULE
+1. **April 17 - April 21**: Patricia Trie and Time Test Cases
+- Jake Wen: Determine suitable test cases for timing all versions of the trie, for later use on graph and report. The test cases should vary on word length, total word count, and word characteristic.
+- Jake Wen: Run the tests on the implemented sequetial version of the trie.
+- Sam Wang: Continue working on sequential implementation of Patricia Trie.
 
-5. **Week of April 29**: Documentation, Report Writing, and Poster Creation
-- Documentation: Ensure all code is well-documented, with clear explanations of the parallel algorithms and optimizations used.
-- Report Writing: Compile comprehensive analysis of the project’s development process, with a focus on the implementation and optimization of parallel algorithms. Include detailed benchmarking results and insights gained from the comparison of different trie implementations.
-- Poster Creation: Design a poster that highlights the project’s achievements in parallel computing, showcasing the benefits of the parallel trie structures, lock-free synchronization techniques, and CUDA acceleration.
+2. **April 22 - April 25**: Coarse-grained and Fine-grained Lock Version of Distributed Redix Trie
+- Jake Wen: Implement the fine-grained lock verion of distributed trie and collect data
+- Sam Wang: Implement the coarse-grained lock verion of distributed trie and collect data
 
+3. **April 26 - April 28**: Final Exam for Other Courses, No Schedule
+
+4. **April 29 - May 1**: Lock-free version of Redix Trie
+- Sam Wang: Implement the lock-free version of Redix Trie.
+- Jake Wen: Collect data and create speedup and other graphs.
+
+5. **May 2 - May 5**: Documentation, Report Writing, and Poster Creation
+- Jake Wen: Ensure all code is well-documented, with clear explanations of the parallel algorithms and optimizations used.
+- Sam Wang and Jake Wen: Compile comprehensive analysis of the project’s development process, with a focus on the implementation and optimization of parallel algorithms. Include detailed benchmarking results and insights gained from the comparison of different trie implementations.
+- Sam Wang and Jake Wen: Design a poster that highlights the project’s achievements in parallel computing, showcasing the benefits of the parallel trie structures, lock-free synchronization techniques, and CUDA acceleration.
+
+## Milestone
+Over the past two weeks, our team has concentrated on developing sequential algorithms for different trie variations, specifically the Radix Trie and Patricia Trie. This focus was driven by our unfamiliarity with the trie data structure. After reviewing the foundational paper on the Patricia Trie and various online resources, we successfully implemented the sequential version of the Radix Trie and drafted the implementation plan for the Patricia Trie. While the Radix Trie met all correctness tests, we encountered issues with the Patricia Trie and are currently diagnosing these errors.
+
+As outlined in our future proposal, we aim to complete the Patricia Trie implementation within this week. Success in this endeavor will allow us to develop parallel algorithms for both trie types. Conversely, should complications arise, our efforts will pivot towards refining the Radix Trie, especially considering its structural complexity compared to the binary node limit in the Patricia Trie, which could pose challenges in parallel processing when using a large number of threads.
+
+Before our final presentation, our objectives include completing the coarse lock, fine-grained lock, and lock-free versions of the Radix Trie. While parallel implementations of the Patricia Trie remain a secondary goal, our final report and presentation will feature speed-up, cache-miss, and storage efficiency graphs to illustrate our findings and optimizations.
