@@ -82,11 +82,11 @@ We will implement the trie data structure in C++ and develop the benchmark scrip
 ## PAST SCHEDULE
 
 1. **Week of April 1**: Project Setup, Initial Research, and Design Planning
-- Deeped dive into algroithm for Trie, Redix Trie, and PATRICIA(Practical Algorithm to Retrieve Information Coded in Alphanumeric) Trie.
+- Deeped dive into algroithm for Trie, Radix Trie, and PATRICIA(Practical Algorithm to Retrieve Information Coded in Alphanumeric) Trie.
 - Discussed on parallel implementations of the Patricia trie: distributed version with locks and lock-free version.
 
-2. **Week of April 8**: Sequential Implementation of Redix Trie and Patricia Trie
-- Implemented the basic structure of sequential version of Redix trie.
+2. **Week of April 8**: Sequential Implementation of Radix Trie and Patricia Trie
+- Implemented the basic structure of sequential version of Radix trie.
 - Developed test cases to evaluate the correctness of the trie.
 - Further studied on Patricia Trie data structure and algorithm, and implemented the basic structure of sequential version of patricia trie.
 
@@ -97,14 +97,14 @@ We will implement the trie data structure in C++ and develop the benchmark scrip
 - Jake Wen: Run the tests on the implemented sequetial version of the trie.
 - Sam Wang: Continue working on sequential implementation of Patricia Trie.
 
-2. **April 22 - April 25**: Coarse-grained and Fine-grained Lock Version of Distributed Redix Trie
+2. **April 22 - April 25**: Coarse-grained and Fine-grained Lock Version of Distributed Radix Trie
 - Jake Wen: Implement the fine-grained lock verion of distributed trie and benchmark
 - Sam Wang: Implement the coarse-grained lock verion of distributed trie and benchmark
 
 3. **April 26 - April 28**: Final Exam for Other Courses, No Schedule
 
-4. **April 29 - May 1**: Lock-free version of Redix Trie
-- Sam Wang: Implement the lock-free version of Redix Trie.
+4. **April 29 - May 1**: Lock-free version of Radix Trie
+- Sam Wang: Implement the lock-free version of Radix Trie.
 - Jake Wen: Benchmark and create speedup and other graphs.
 
 5. **May 2 - May 5**: Documentation, Report Writing, and Poster Creation
