@@ -94,7 +94,7 @@ We will implement the trie data structure in C++ and develop the benchmark scrip
 ## FUTURE SCHEDULE
 1. **April 17 - April 21**: Patricia Trie and Time Test Cases
 - Jake Wen: Determine suitable test cases for timing all versions of the trie, for later use on graph and report. The test cases should vary on word length, total word count, and word characteristic.
-- Jake Wen: Run the tests on the implemented sequetial version of the trie.
+- Jake Wen: Run benchmark on the implemented sequetial version of the trie.
 - Sam Wang: Continue working on sequential implementation of Patricia Trie.
 
 2. **April 22 - April 25**: Coarse-grained and Fine-grained Lock Version of Distributed Radix Trie
