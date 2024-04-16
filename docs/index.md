@@ -98,14 +98,14 @@ We will implement the trie data structure in C++ and develop the benchmark scrip
 - Sam Wang: Continue working on sequential implementation of Patricia Trie.
 
 2. **April 22 - April 25**: Coarse-grained and Fine-grained Lock Version of Distributed Redix Trie
-- Jake Wen: Implement the fine-grained lock verion of distributed trie and collect data
-- Sam Wang: Implement the coarse-grained lock verion of distributed trie and collect data
+- Jake Wen: Implement the fine-grained lock verion of distributed trie and benchmark
+- Sam Wang: Implement the coarse-grained lock verion of distributed trie and benchmark
 
 3. **April 26 - April 28**: Final Exam for Other Courses, No Schedule
 
 4. **April 29 - May 1**: Lock-free version of Redix Trie
 - Sam Wang: Implement the lock-free version of Redix Trie.
-- Jake Wen: Collect data and create speedup and other graphs.
+- Jake Wen: Benchmark and create speedup and other graphs.
 
 5. **May 2 - May 5**: Documentation, Report Writing, and Poster Creation
 - Jake Wen: Ensure all code is well-documented, with clear explanations of the parallel algorithms and optimizations used.
