@@ -1,11 +1,11 @@
-#include "RedixTrie.h"
+#include "RadixTrie.h"
 #include <iostream>
 
-class RedixTrieTest {
+class RadixTrieTest {
 public:
-    RedixTrie trie;
+    RadixTrie trie;
 
-    RedixTrieTest() : trie() {}
+    RadixTrieTest() : trie() {}
 
     void TestInsertAndSearch() {
         std::cout << "Running TestInsertAndSearch..." << std::endl;
@@ -33,7 +33,7 @@ public:
         std::cout << "Running TestEmptyTrie..." << std::endl;
 
         // Test searching in an empty trie
-        RedixTrie emptyTrie;  // Create a new empty trie
+        RadixTrie emptyTrie;  // Create a new empty trie
         CheckResult("", emptyTrie.search("") == false);
         CheckResult("anything", emptyTrie.search("anything") == false);
     }
@@ -45,7 +45,7 @@ private:
 };
 
 int main() {
-    RedixTrieTest tests;
+    RadixTrieTest tests;
 
     tests.TestInsertAndSearch();
     tests.TestSearchNonExistentString();

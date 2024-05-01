@@ -2,14 +2,14 @@
 CXX = g++
 
 # Compiler flags
-CXXFLAGS = -Wall -std=c++11 -Icode/redix  # Include directory for headers
+CXXFLAGS = -Wall -std=c++11 -Icode/radix  # Include directory for headers
 
 # Directories
-CODE_DIR = code/redix
+CODE_DIR = code/radix
 TEST_DIR = tests/correctness
 
 # Source files
-SRC = $(CODE_DIR)/RedixTrie.cpp
+SRC = $(CODE_DIR)/RadixTrie.cpp
 
 # Object files
 OBJ = $(SRC:.cpp=.o)
