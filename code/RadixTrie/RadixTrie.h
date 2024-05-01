@@ -1,5 +1,6 @@
-#ifndef RADIX_TREE_H
-#define RADIX_TREE_H
+// RadixTrie.h
+#ifndef RADIX_TRIE_H
+#define RADIX_TRIE_H
 
 #include <string>
 #include <array>
@@ -10,13 +11,13 @@
 template <typename O>
 class RadixNode {
 public:
-    std::string key;  // Key fragment stored at this node
-    O value;  // Single value associated with this node
-    std::array<std::shared_ptr<RadixNode<O>>, 26> children;  // Array of children nodes, one for each letter a-z
-    bool isTerminal;  // True if this node represents the end of a key
+    std::string key;
+    O value;
+    std::array<std::shared_ptr<RadixNode<O>>, 26> children;
+    bool isTerminal;
 
     explicit RadixNode(const std::string& key) : key(key), value(O()), isTerminal(false) {
-        children.fill(nullptr);  // Initialize all child pointers to nullptr
+        children.fill(nullptr);
     }
 };
 
@@ -25,9 +26,8 @@ class RadixTree {
 private:
     std::shared_ptr<RadixNode<O>> root;
 
-    // Helper functions
-    std::shared_ptr<RadixNode<O>> insertRec(std::shared_ptr<RadixNode<O>> node, const std::string& key, const O& value);
-    std::shared_ptr<RadixNode<O>> findNode(const std::shared_ptr<RadixNode<O>>& node, const std::string& key) const;
+    std::shared_ptr<RadixNode<O>> insertRec(std::shared_ptr<RadixNode<O>> node, const std::string& key, const O& value, int depth = 0);
+    std::shared_ptr<RadixNode<O>> findNode(const std::shared_ptr<RadixNode<O>>& node, const std::string& key, int depth = 0) const;
     std::vector<std::pair<std::string, O>> collectPairsRec(const std::shared_ptr<RadixNode<O>>& node, const std::string& prefix) const;
 
 public:
@@ -35,10 +35,11 @@ public:
 
     O put(const std::string& key, const O& value);
     O getValueForExactKey(const std::string& key) const;
-
     std::vector<std::string> getKeysStartingWith(const std::string& prefix) const;
     std::vector<O> getValuesForKeysStartingWith(const std::string& prefix) const;
-    std::vector<std::pair<std::string, O>> (const std::string& prefix) const;
-
-    int size() const;
+    std::vector<std::pair<std::string, O>> collectPairs(const std::string& prefix) const;
 };
+
+#include "Trie.cpp"  // Include the implementation file (Change to test another implementation)
+
+#endif // RADIX_TRIE_H
