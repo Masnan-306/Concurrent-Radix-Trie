@@ -1,12 +1,12 @@
-#include "PatriciaTree.h"
+#include "RedixTrie.h"
 
-void PatriciaTree::insert(const std::string &key) {
+void RedixTrie::insert(const std::string &key) {
     root = insertRec(root, key);
 }
 
-std::shared_ptr<PatriciaNode> PatriciaTree::insertRec(std::shared_ptr<PatriciaNode> node, const std::string &key) {
+std::shared_ptr<RedixNode> RedixTrie::insertRec(std::shared_ptr<RedixNode> node, const std::string &key) {
     if (node == nullptr) {
-        auto newNode = std::make_shared<PatriciaNode>(key);
+        auto newNode = std::make_shared<RedixNode>(key);
         newNode->isTerminal = true;
         return newNode;
     }
@@ -28,7 +28,7 @@ std::shared_ptr<PatriciaNode> PatriciaTree::insertRec(std::shared_ptr<PatriciaNo
         }
     } else {
         // Split the node
-        auto splitNode = std::make_shared<PatriciaNode>(node->key.substr(commonLength));
+        auto splitNode = std::make_shared<RedixNode>(node->key.substr(commonLength));
         splitNode->children = std::move(node->children);
         splitNode->isTerminal = node->isTerminal;
 
@@ -48,11 +48,11 @@ std::shared_ptr<PatriciaNode> PatriciaTree::insertRec(std::shared_ptr<PatriciaNo
     return node;
 }
 
-bool PatriciaTree::search(const std::string& key) const {
+bool RedixTrie::search(const std::string& key) const {
     return searchRec(root, key);
 }
 
-bool PatriciaTree::searchRec(const std::shared_ptr<PatriciaNode>& node, const std::string& key) const {
+bool RedixTrie::searchRec(const std::shared_ptr<RedixNode>& node, const std::string& key) const {
     if (node == nullptr) return false;
     
     int commonLength = 0;

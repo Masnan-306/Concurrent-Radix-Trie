@@ -1,32 +1,32 @@
-#ifndef PATRICIA_TREE_H
-#define PATRICIA_TREE_H
+#ifndef Redix_TREE_H
+#define Redix_TREE_H
 
 #include <memory>
 #include <string>
 #include <vector>
 
-class PatriciaNode {
+class RedixNode {
 public:
     std::string key;        // key fragment stored at this node
     bool isTerminal;        // true if this node represents the end of a key
-    std::vector<std::shared_ptr<PatriciaNode>> children;  // children nodes
+    std::vector<std::shared_ptr<RedixNode>> children;  // children nodes
 
-    explicit PatriciaNode(const std::string& key) : key(key), isTerminal(false) {}
+    explicit RedixNode(const std::string& key) : key(key), isTerminal(false) {}
 };
 
-class PatriciaTree {
+class RedixTrie {
 private:
-    std::shared_ptr<PatriciaNode> root;
+    std::shared_ptr<RedixNode> root;
 
     // Helper functions
-    std::shared_ptr<PatriciaNode> insertRec(std::shared_ptr<PatriciaNode> node, const std::string& key);
-    bool searchRec(const std::shared_ptr<PatriciaNode>& node, const std::string& key) const;
+    std::shared_ptr<RedixNode> insertRec(std::shared_ptr<RedixNode> node, const std::string& key);
+    bool searchRec(const std::shared_ptr<RedixNode>& node, const std::string& key) const;
 
 public:
-    PatriciaTree() : root(std::make_shared<PatriciaNode>("")) {}
+    RedixTrie() : root(std::make_shared<RedixNode>("")) {}
 
     void insert(const std::string& key);
     bool search(const std::string& key) const;
 };
 
-#endif // PATRICIA_TREE_H
+#endif // Redix_TREE_H

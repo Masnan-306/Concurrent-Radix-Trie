@@ -1,44 +1,56 @@
-#include <gtest/gtest.h>
-#include "PatriciaTree.h"
+#include "RedixTrie.h"
+#include <iostream>
 
-class PatriciaTreeTest : public ::testing::Test {
-protected:
-    PatriciaTree tree;
+class RedixTrieTest {
+public:
+    RedixTrie trie;
 
-    void SetUp() override {
-        tree = PatriciaTree();
+    RedixTrieTest() : trie() {}
+
+    void TestInsertAndSearch() {
+        std::cout << "Running TestInsertAndSearch..." << std::endl;
+
+        // Test insertion of strings
+        trie.insert("hello");
+        trie.insert("world");
+        trie.insert("helium");
+
+        // Check and print results
+        CheckResult("hello", trie.search("hello"));
+        CheckResult("world", trie.search("world"));
+        CheckResult("help", trie.search("help") == false);  // "help" should not be found
+        CheckResult("helium", trie.search("helium"));
     }
 
-    void TearDown() override {
-        // Cleanup code here, if needed.
+    void TestSearchNonExistentString() {
+        std::cout << "Running TestSearchNonExistentString..." << std::endl;
+
+        // Test searching for a string that has not been inserted
+        CheckResult("nonexistent", trie.search("nonexistent") == false);
+    }
+
+    void TestEmptyTrie() {
+        std::cout << "Running TestEmptyTrie..." << std::endl;
+
+        // Test searching in an empty trie
+        RedixTrie emptyTrie;  // Create a new empty trie
+        CheckResult("", emptyTrie.search("") == false);
+        CheckResult("anything", emptyTrie.search("anything") == false);
+    }
+
+private:
+    void CheckResult(const std::string& str, bool result) {
+        std::cout << "Test for \"" << str << "\": " << (result ? "PASS" : "FAIL") << std::endl;
     }
 };
 
-TEST_F(PatriciaTreeTest, TestInsertAndSearch) {
-    // Test insertion of strings.
-    tree.insert("hello");
-    tree.insert("world");
-    tree.insert("helium");
+int main() {
+    RedixTrieTest tests;
 
-    // Test searching of strings.
-    EXPECT_TRUE(tree.search("hello"));
-    EXPECT_TRUE(tree.search("world"));
-    EXPECT_FALSE(tree.search("help"));  // "help" is not inserted, should return false
-    EXPECT_TRUE(tree.search("helium"));
-}
+    tests.TestInsertAndSearch();
+    tests.TestSearchNonExistentString();
+    tests.TestEmptyTrie();
+    std::cout << "All tests passed!" << std::endl;
 
-TEST_F(PatriciaTreeTest, TestSearchNonExistentString) {
-    // Test searching for a string that has not been inserted.
-    EXPECT_FALSE(tree.search("nonexistent"));
-}
-
-TEST_F(PatriciaTreeTest, TestEmptyTree) {
-    // Test searching in an empty tree.
-    EXPECT_FALSE(tree.search(""));
-    EXPECT_FALSE(tree.search("anything"));
-}
-
-int main(int argc, char **argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+    return 0;
 }
