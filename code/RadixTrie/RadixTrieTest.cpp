@@ -1,5 +1,5 @@
 // RadixTrieTest.cpp
-#include "RadixTrieCourseLock.h"
+#include "RadixTrieCoarseLock.h"
 #include <iostream>
 #include <thread>
 #include <vector>

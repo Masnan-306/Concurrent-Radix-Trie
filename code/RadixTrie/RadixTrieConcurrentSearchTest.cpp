@@ -3,7 +3,7 @@
 #include <vector>
 #include <map>
 #include <mutex>
-#include "RadixTrieCourseLock.h"
+#include "RadixTrieCoarseLock.h"
 
 template <typename O>
 void searchForKey(RadixTreeLock<O>& tree, const std::string& key, std::map<std::string, O>& results, std::mutex& resultsMutex) {
