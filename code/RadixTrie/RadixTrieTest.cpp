@@ -38,9 +38,23 @@ void testGetKeysStartingWith() {
               << (test ? "PASSED" : "FAILED") << std::endl;
 }
 
+void testNoPairs() {
+    RadixTree<int> tree;
+    tree.put("apple", 10);
+    tree.put("app", 5);
+    tree.put("ape", 7);
+
+    auto pairs = tree.collectPairs("bp");
+    bool test = (pairs.size() == 0);
+
+    std::cout << "Test Collect 0 Pairs: "
+              << (test ? "PASSED" : "FAILED") << std::endl;
+}
+
 int main() {
     testInsertAndSearch();
     testCollectPairs();
     testGetKeysStartingWith();
+    testNoPairs();
     return 0;
 }

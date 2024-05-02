@@ -1,4 +1,3 @@
-// RadixTrie.h
 #ifndef RADIX_TRIE_H
 #define RADIX_TRIE_H
 
@@ -7,6 +6,7 @@
 #include <memory>
 #include <vector>
 #include <utility>
+#include <iostream>
 
 template <typename O>
 class RadixNode {
@@ -30,6 +30,9 @@ private:
     std::shared_ptr<RadixNode<O>> findNode(const std::shared_ptr<RadixNode<O>>& node, const std::string& key, int depth = 0) const;
     std::vector<std::pair<std::string, O>> collectPairsRec(const std::shared_ptr<RadixNode<O>>& node, const std::string& prefix) const;
 
+    // Helper function for printing the tree
+    void printTree(const std::shared_ptr<RadixNode<O>>& node, const std::string& prefix, const std::string& childPrefix) const;
+
 public:
     RadixTree() : root(std::make_shared<RadixNode<O>>("")) {}
 
@@ -38,8 +41,11 @@ public:
     std::vector<std::string> getKeysStartingWith(const std::string& prefix) const;
     std::vector<O> getValuesForKeysStartingWith(const std::string& prefix) const;
     std::vector<std::pair<std::string, O>> collectPairs(const std::string& prefix) const;
+
+    // Public method to print the entire trie
+    void print() const;
 };
 
-#include "Trie.cpp"  // Include the implementation file (Change to test another implementation)
+#include "RadixTrieSequential.cpp"  // Include the implementation file
 
 #endif // RADIX_TRIE_H

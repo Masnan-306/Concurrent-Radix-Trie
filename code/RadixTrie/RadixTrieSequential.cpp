@@ -5,32 +5,73 @@
 template <typename O>
 std::shared_ptr<RadixNode<O>> RadixTree<O>::insertRec(std::shared_ptr<RadixNode<O>> node, const std::string& key, const O& value, int depth) {
     if (!node) {
-        node = std::make_shared<RadixNode<O>>(key.substr(depth-1,1));
+        node = std::make_shared<RadixNode<O>>(key.substr(depth));
+        node->value = value;
+        node->isTerminal = true;
+        return node;
     }
-    if (depth == key.length()) {
+
+    // Compute common prefix length
+    int commonPrefixLength = 0;
+    while (commonPrefixLength < node->key.length() && commonPrefixLength + depth < key.length() && node->key[commonPrefixLength] == key[depth + commonPrefixLength]) {
+        ++commonPrefixLength;
+    }
+
+    // Split the node if necessary
+    if (commonPrefixLength < node->key.length()) {
+        auto newNode = std::make_shared<RadixNode<O>>(node->key.substr(commonPrefixLength));
+        newNode->children = node->children;
+        newNode->isTerminal = node->isTerminal;
+        newNode->value = node->value;
+
+        node->key = node->key.substr(0, commonPrefixLength);
+        node->children.fill(nullptr);
+        int index = key[depth] - 'a';
+        node->children[index] = newNode;
+        node->isTerminal = false;
+    }
+
+    if (commonPrefixLength + depth == key.length()) {
         node->isTerminal = true;
         node->value = value;
     } else {
-        int index = key[depth] - 'a';
-        node->children[index] = insertRec(node->children[index], key, value, depth + 1);
+        int index = key[depth + commonPrefixLength] - 'a';
+        node->children[index] = insertRec(node->children[index], key, value, depth + commonPrefixLength);
     }
+
     return node;
 }
 
 template <typename O>
 O RadixTree<O>::put(const std::string& key, const O& value) {
-    root = insertRec(root, key, value);
+    root = insertRec(root, key, value, 0);
     return value;
 }
+
 
 template <typename O>
 std::shared_ptr<RadixNode<O>> RadixTree<O>::findNode(const std::shared_ptr<RadixNode<O>>& node, const std::string& key, int depth) const {
     if (!node || depth == key.length()) {
         return node;
     }
-    int index = key[depth] - 'a';
-    return findNode(node->children[index], key, depth + 1);
+
+    int commonPrefixLength = 0;
+    while (commonPrefixLength < node->key.length() && commonPrefixLength + depth < key.length() && node->key[commonPrefixLength] == key[depth + commonPrefixLength]) {
+        ++commonPrefixLength;
+    }
+
+    if (commonPrefixLength < node->key.length()) {
+        return nullptr;  // No match found
+    }
+
+    if (commonPrefixLength + depth == key.length()) {
+        return node;
+    }
+
+    int index = key[depth + commonPrefixLength] - 'a';
+    return findNode(node->children[index], key, depth + commonPrefixLength);
 }
+
 
 template <typename O>
 O RadixTree<O>::getValueForExactKey(const std::string& key) const {
@@ -57,8 +98,8 @@ std::vector<std::pair<std::string, O>> RadixTree<O>::collectPairsRec(const std::
     }
     for (int i = 0; i < 26; i++) {
         if (node->children[i]) {
-            char childChar = 'a' + i;
-            std::vector<std::pair<std::string, O>> childPairs = collectPairsRec(node->children[i], prefix + childChar);
+            std::string childStr = node->children[i]->key;
+            std::vector<std::pair<std::string, O>> childPairs = collectPairsRec(node->children[i], prefix + childStr);
             pairs.insert(pairs.end(), childPairs.begin(), childPairs.end());
         }
     }
