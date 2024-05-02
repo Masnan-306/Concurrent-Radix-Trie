@@ -1,0 +1,47 @@
+# Compiled Object files
+*.o
+*.so
+*.ko
+*.obj
+*.elf
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Executables and Libraries
+a.out
+*.dll
+*.exe
+*.dylib
+*.bin
+*.run
+*.out
+*.i*86
+*.x86_64
+*.hex
+
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Project-specific executables
+RadixTrieBulkInsertTest
+RadixTrieConcurrentSearchTest
+RadixTrieTest
+
+# Log files and databases
+*.log
+*.sql
+*.sqlite
