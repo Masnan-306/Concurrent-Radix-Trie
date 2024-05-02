@@ -6,7 +6,7 @@
 #include "RadixTrieCoarseLock.h"
 
 int main() {
-    RadixTreeLock<int> trie;
+    RadixTreeParallel<int> trie;
     std::ifstream file("../../tests/time/words/hard_filtered_words.txt");
     std::vector<std::string> words;
 

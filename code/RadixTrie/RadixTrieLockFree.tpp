@@ -26,11 +26,11 @@ RadixNode<O>* RadixNode<O>::getChild(int index) const {
 
 // RadixTree implementation
 template <typename O>
-RadixTree<O>::RadixTree() : root(nullptr) {}
+RadixTreeParallel<O>::RadixTreeParallel() : root(nullptr) {}
 
 // Lock-free insert method
 template <typename O>
-void RadixTree<O>::put(const std::string& key, const O& value) {
+void RadixTreeParallel<O>::put(const std::string& key, const O& value) {
     RadixNode<O>* newNode = new RadixNode<O>(key, value, true);
 
     while (true) {
@@ -49,7 +49,7 @@ void RadixTree<O>::put(const std::string& key, const O& value) {
 }
 
 template <typename O>
-bool RadixTree<O>::insertRec(RadixNode<O>* node, const std::string& key, const O& value, int depth) {
+bool RadixTreeParallel<O>::insertRec(RadixNode<O>* node, const std::string& key, const O& value, int depth) {
     if (!node) {
         return false;
     }
@@ -99,7 +99,7 @@ bool RadixTree<O>::insertRec(RadixNode<O>* node, const std::string& key, const O
 }
 
 template <typename O>
-O RadixTree<O>::getValueForExactKey(const std::string& key) {
+O RadixTreeParallel<O>::getValueForExactKey(const std::string& key) {
     RadixNode<O>* node = root.load(std::memory_order_acquire);
     int depth = 0;
 

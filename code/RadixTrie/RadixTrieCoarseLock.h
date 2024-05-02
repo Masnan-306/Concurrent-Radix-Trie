@@ -5,13 +5,13 @@
 #include "RadixTrie.h"
 
 template <typename O>
-class RadixTreeLock {
+class RadixTreeParallel {
 private:
     RadixTree<O> tree;
     mutable std::mutex mtx;
 
 public:
-    RadixTreeLock() = default;
+    RadixTreeParallel() = default;
 
     O put(const std::string& key, const O& value) {
         std::lock_guard<std::mutex> lock(mtx);

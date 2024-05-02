@@ -22,12 +22,12 @@ public:
 };
 
 template <typename O>
-class RadixTree {
+class RadixTreeParallel {
 private:
     std::atomic<RadixNode<O>*> root;
 
 public:
-    RadixTree();
+    RadixTreeParallel();
 
     // Lock-free insert method
     void put(const std::string& key, const O& value);

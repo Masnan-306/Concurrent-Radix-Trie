@@ -5,7 +5,7 @@
 #include <vector>
 
 void testInsertAndSearch() {
-    RadixTree<int> tree;
+    RadixTreeParallel<int> tree;
     tree.put("apple", 10);
 
     bool test1 = (tree.getValueForExactKey("apple") == 10);
@@ -54,7 +54,7 @@ void testInsertAndSearch() {
 // }
 
 void testUpdateExistingKey() {
-    RadixTree<int> tree;
+    RadixTreeParallel<int> tree;
     tree.put("apple", 10);
     tree.put("apple", 20);
 
@@ -65,7 +65,7 @@ void testUpdateExistingKey() {
 }
 
 void testSearchNonExistingKey() {
-    RadixTree<int> tree;
+    RadixTreeParallel<int> tree;
     tree.put("apple", 10);
 
     bool test = (tree.getValueForExactKey("orange") == int());
@@ -75,7 +75,7 @@ void testSearchNonExistingKey() {
 }
 
 void testEdgeCases() {
-    RadixTree<int> tree;
+    RadixTreeParallel<int> tree;
     tree.put("i", 0);
     std::cout << "Checking insertion of 'example': " << std::endl;
     tree.put("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", 1);
@@ -89,7 +89,7 @@ void testEdgeCases() {
 }
 
 void testSearchExistingLongerKey() {
-    RadixTree<int> tree;
+    RadixTreeParallel<int> tree;
     tree.put("apple", 10);
     tree.put("app", 9);
 
@@ -100,7 +100,7 @@ void testSearchExistingLongerKey() {
 }
 
 void testReorderedPuts() {
-    RadixTree<int> tree;
+    RadixTreeParallel<int> tree;
     tree.put("app", 9);
     tree.put("ape", 9);
     tree.put("apple", 10);
@@ -115,13 +115,13 @@ void testReorderedPuts() {
 // Concurrent Tests Begin Here
 // ---------------------------------------
 
-void threadPutTask(RadixTree<int>& tree, const std::string& key, int value) {
+void threadPutTask(RadixTreeParallel<int>& tree, const std::string& key, int value) {
     tree.put(key, value);
     // std::cout << "Inserted (" << key << ", " << value << ")\n";
 }
 
 void testConcurrentPuts() {
-    RadixTree<int> tree;
+    RadixTreeParallel<int> tree;
     std::vector<std::thread> threads;
 
     // Start multiple threads to insert different keys

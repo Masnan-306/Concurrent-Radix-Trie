@@ -6,7 +6,7 @@
 #include "RadixTrieCoarseLock.h"
 
 template <typename O>
-void searchForKey(RadixTreeLock<O>& tree, const std::string& key, std::map<std::string, O>& results, std::mutex& resultsMutex) {
+void searchForKey(RadixTreeParallel<O>& tree, const std::string& key, std::map<std::string, O>& results, std::mutex& resultsMutex) {
     try {
         O value = tree.getValueForExactKey(key);
         std::lock_guard<std::mutex> lock(resultsMutex);
@@ -18,7 +18,7 @@ void searchForKey(RadixTreeLock<O>& tree, const std::string& key, std::map<std::
 }
 
 int main() {
-    RadixTreeLock<int> tree;
+    RadixTreeParallel<int> tree;
     tree.put("apple", 1);
     tree.put("applestore", 1);
     tree.put("apricot", 2);
