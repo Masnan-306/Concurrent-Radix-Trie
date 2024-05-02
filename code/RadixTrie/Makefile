@@ -3,7 +3,7 @@ CXXFLAGS = -std=c++17 -Wall -I. -g
 
 all: test
 
-test: RadixTrieTest.cpp RadixTrie.h
+test: RadixTrieTest.cpp
 	$(CXX) $(CXXFLAGS) -o RadixTrieTest RadixTrieTest.cpp
 	./RadixTrieTest
 

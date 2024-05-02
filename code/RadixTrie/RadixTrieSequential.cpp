@@ -12,6 +12,7 @@ std::shared_ptr<RadixNode<O>> RadixTree<O>::insertRec(std::shared_ptr<RadixNode<
     }
 
     // Compute common prefix length
+    // Note that commonPrefixLength + depth <= key.length() after this loop
     int commonPrefixLength = 0;
     while (commonPrefixLength < node->key.length() && commonPrefixLength + depth < key.length() && node->key[commonPrefixLength] == key[depth + commonPrefixLength]) {
         ++commonPrefixLength;
@@ -24,9 +25,9 @@ std::shared_ptr<RadixNode<O>> RadixTree<O>::insertRec(std::shared_ptr<RadixNode<
         newNode->isTerminal = node->isTerminal;
         newNode->value = node->value;
 
+        int index = node->key[commonPrefixLength] - 'a';
         node->key = node->key.substr(0, commonPrefixLength);
         node->children.fill(nullptr);
-        int index = key[depth] - 'a';
         node->children[index] = newNode;
         node->isTerminal = false;
     }

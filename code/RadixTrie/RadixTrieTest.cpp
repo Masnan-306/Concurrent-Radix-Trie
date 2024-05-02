@@ -1,5 +1,5 @@
 // RadixTrieTest.cpp
-#include "RadixTrie.h"
+#include "RadixTrieCourseLock.h"
 #include <iostream>
 #include <thread>
 #include <vector>
@@ -87,7 +87,7 @@ void testEdgeCases() {
               << (test1 && test2 && test3 ? "PASSED" : "FAILED!!!") << std::endl;
 }
 
-void testSearcExistingLongerKey() {
+void testSearchExistingLongerKey() {
     RadixTree<int> tree;
     tree.put("apple", 10);
     tree.put("app", 9);
@@ -98,24 +98,36 @@ void testSearcExistingLongerKey() {
               << (test ? "PASSED" : "FAILED!!!") << std::endl;
 }
 
+void testReorderedPuts() {
+    RadixTree<int> tree;
+    tree.put("app", 9);
+    tree.put("ape", 9);
+    tree.put("apple", 10);
+
+    bool test = (tree.getValueForExactKey("app") == 9);
+
+    std::cout << "Test Search for Reordered Inserts: "
+              << (test ? "PASSED" : "FAILED!!!") << std::endl;
+}
+
 // ---------------------------------------
 // Concurrent Tests Begin Here
 // ---------------------------------------
 
-void threadTask(RadixTree<int>& tree, const std::string& key, int value) {
+void threadPutTask(RadixTreeLock<int>& tree, const std::string& key, int value) {
     tree.put(key, value);
     std::cout << "Inserted (" << key << ", " << value << ")\n";
 }
 
-void testConcurrency() {
-    RadixTree<int> tree;
+void testConcurrentPuts() {
+    RadixTreeLock<int> tree;
     std::vector<std::thread> threads;
 
     // Start multiple threads to insert different keys
-    threads.push_back(std::thread(threadTask, std::ref(tree), "apple", 10));
-    threads.push_back(std::thread(threadTask, std::ref(tree), "app", 5));
-    threads.push_back(std::thread(threadTask, std::ref(tree), "ape", 7));
-    threads.push_back(std::thread(threadTask, std::ref(tree), "banana", 20));
+    threads.push_back(std::thread(threadPutTask, std::ref(tree), "apple", 10));
+    threads.push_back(std::thread(threadPutTask, std::ref(tree), "app", 5));
+    threads.push_back(std::thread(threadPutTask, std::ref(tree), "ape", 7));
+    threads.push_back(std::thread(threadPutTask, std::ref(tree), "banana", 20));
 
     for (auto& thread : threads) {
         thread.join();
@@ -145,9 +157,10 @@ int main() {
     testUpdateExistingKey();
     testSearchNonExistingKey();
     testEdgeCases();
-    testSearcExistingLongerKey();
+    testSearchExistingLongerKey();
+    testReorderedPuts();
 
     // Concurrent Tests
-    testConcurrency();
+    testConcurrentPuts();
     return 0;
 }
