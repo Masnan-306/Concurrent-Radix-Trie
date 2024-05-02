@@ -116,7 +116,7 @@ void testReorderedPuts() {
 
 void threadPutTask(RadixTreeLock<int>& tree, const std::string& key, int value) {
     tree.put(key, value);
-    std::cout << "Inserted (" << key << ", " << value << ")\n";
+    // std::cout << "Inserted (" << key << ", " << value << ")\n";
 }
 
 void testConcurrentPuts() {
@@ -139,7 +139,7 @@ void testConcurrentPuts() {
                 (tree.getValueForExactKey("ape") == 7) &&
                 (tree.getValueForExactKey("banana") == 20);
 
-    std::cout << "Test Concurrency: "
+    std::cout << "Test Concurrent Puts: "
               << (test ? "PASSED" : "FAILED!!!") << std::endl;
     
     // tree.print();
