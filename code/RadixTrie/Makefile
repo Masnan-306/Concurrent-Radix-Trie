@@ -8,13 +8,13 @@ EXECUTABLES = RadixTrieConcurrentSearchTest RadixTrieTest RadixTrieBulkInsertTes
 
 all: $(EXECUTABLES)
 
-RadixTrieConcurrentSearchTest: RadixTrieConcurrentSearchTest.cpp
+RadixTrieConcurrentSearchTest: RadixTrieConcurrentSearchTest.cpp RadixTrieLockFree.tpp
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o RadixTrieConcurrentSearchTest RadixTrieConcurrentSearchTest.cpp
 
 RadixTrieTest: RadixTrieTest.cpp RadixTrieLockFree.tpp RadixTrieLockFineLock.cpp
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o RadixTrieTest RadixTrieTest.cpp
 
-RadixTrieBulkInsertTest: RadixTrieBulkInsertTest.cpp
+RadixTrieBulkInsertTest: RadixTrieBulkInsertTest.cpp RadixTrieLockFree.tpp
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o RadixTrieBulkInsertTest RadixTrieBulkInsertTest.cpp
 
 run_tests: $(EXECUTABLES)

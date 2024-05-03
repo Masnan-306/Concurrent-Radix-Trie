@@ -1,5 +1,5 @@
 // RadixTrieTest.cpp
-#include "RadixTrieLockFineLock.h"
+#include "RadixTrieLockFree.h"
 #include <iostream>
 #include <thread>
 #include <vector>
@@ -93,6 +93,8 @@ void testSearchExistingLongerKey() {
 
     bool test = (tree.getValueForExactKey("app") == 9);
 
+    // tree.print();
+
     std::cout << "Test Search for Insert in Longer Existing Key: "
               << (test ? "PASSED" : "FAILED!!!") << std::endl;
 }
@@ -103,7 +105,7 @@ void testReorderedPuts() {
     tree.put("ape", 9);
     tree.put("apple", 10);
 
-    tree.print();
+    // tree.print();
 
     bool test = (tree.getValueForExactKey("app") == 9);
 
@@ -134,6 +136,8 @@ void testConcurrentPuts() {
         thread.join();
     }
 
+    // tree.print();
+
     // Test consistency after all threads have finished
     bool test = (tree.getValueForExactKey("apple") == 10) &&
                 (tree.getValueForExactKey("app") == 5) &&
@@ -151,10 +155,12 @@ void testConcurrentPuts() {
 }
 
 int main() {
-    testInsertAndSearch();
+    
     // testCollectPairs();
     // testGetKeysStartingWith();
     // testNoPairs();
+
+    testInsertAndSearch();
     testUpdateExistingKey();
     testSearchNonExistingKey();
     testEdgeCases();

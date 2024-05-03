@@ -11,8 +11,8 @@ class RadixNode {
 public:
     std::string key;
     O value;
-    std::array<std::atomic<RadixNode<O>*>, 26> children;
     bool isTerminal;
+    std::shared_ptr<std::array<std::atomic<RadixNode<O>*>, 26>> children;
 
     explicit RadixNode(const std::string& key, const O& value = O(), bool isTerminal = false);
 
@@ -25,14 +25,16 @@ template <typename O>
 class RadixTreeParallel {
 private:
     std::atomic<RadixNode<O>*> root;
+    void printTree(RadixNode<O>* node, const std::string& prefix, const std::string& childPrefix) const;
+    bool insertHelper(RadixNode<O>* node, const std::string& key, const O& value);
 
 public:
-    RadixTreeParallel();
+    RadixTreeParallel() : root(new RadixNode<O>("")) {}
 
     // Lock-free insert method
     void put(const std::string& key, const O& value);
-    bool insertRec(RadixNode<O>* node, const std::string& key, const O& value, int depth);
     O getValueForExactKey(const std::string& key);
+    void print() const;
 };
 
 #include "RadixTrieLockFree.tpp"

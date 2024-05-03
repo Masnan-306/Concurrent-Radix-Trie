@@ -4,8 +4,9 @@
 #include <vector>
 #include <omp.h>
 #include <chrono>
+#include <random>
 
-#include "RadixTrieLockFineLock.h"
+#include "RadixTrieLockFree.h"
 
 int main() {
     const auto init_start = std::chrono::steady_clock::now();
@@ -26,27 +27,44 @@ int main() {
     }
     file.close();
 
-    // Set the number of threads to use
-    int numThreads = 2;
-    omp_set_num_threads(numThreads);  // Using omp_set_num_threads to set thread count
-    
+    int numThreads = 4;
+    omp_set_num_threads(numThreads);
+
     const double init_time = std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now() - init_start).count();
     std::cout << "Initialization time (sec): " << std::fixed << std::setprecision(10) << init_time << '\n';
 
-  const auto compute_start = std::chrono::steady_clock::now();
-    #pragma omp parallel for
+    const auto compute_start = std::chrono::steady_clock::now();
+    #pragma omp parallel for schedule(dynamic)
     for (int i = 0; i < words.size(); i++) {
-        for (int j = 0; j< 10; j++){
+        for (int j = 0; j< 30; j++){
             trie.put(words[i], 1);
         }
     }
 
     std::cout << "Inserted " << words.size() << " words into the Radix Trie using " << numThreads << " threads." << std::endl;
 
-    std::cout << "Checking insertion of 'example': " << trie.getValueForExactKey("example") << std::endl;
-    std::cout << "Checking insertion of 'aalii': " << trie.getValueForExactKey("aalii") << std::endl;
-    std::cout << "Checking insertion of 'aaaaaaa': " << trie.getValueForExactKey("aaaaaaa") << std::endl;
+    // Random test access
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> distrib(0, words.size() - 1);
+
+    const int numTests = 100000; // Number of random tests
+    int failedCount = 0;
+
+    #pragma omp parallel for reduction(+:failedCount) schedule(dynamic)
+    for (int i = 0; i < numTests; i++) {
+        int index = distrib(gen);
+        // trie.getValueForExactKey(words[index]);
+        if (trie.getValueForExactKey(words[index]) != 1) {
+            std::cerr << "Test failed for word: " << words[index] << std::endl;
+            failedCount++;
+        }
+    }
+
+    std::cout << "Performed " << numTests << " random access tests, with " << failedCount << " failures." << std::endl;
+
     const double compute_time = std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now() - compute_start).count();
     std::cout << "Computation time (sec): " << compute_time << '\n';
+
     return 0;
 }
