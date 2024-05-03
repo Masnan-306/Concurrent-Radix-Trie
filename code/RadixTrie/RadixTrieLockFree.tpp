@@ -44,6 +44,7 @@ void RadixTreeParallel<O>::put(const std::string& key, const O& value) {
                 delete newNode; // If insertion is successful, delete the created node
                 return;
             }
+            // std::cout << "else case " << std::endl;
         }
     }
 }
@@ -51,8 +52,11 @@ void RadixTreeParallel<O>::put(const std::string& key, const O& value) {
 template <typename O>
 bool RadixTreeParallel<O>::insertRec(RadixNode<O>* node, const std::string& key, const O& value, int depth) {
     if (!node) {
-        return false;
+        return true;
     }
+    
+    std::cout << "node key is: " + node->key << std::endl;
+    std::cout << key.substr(depth) << std::endl;
 
     // Compute common prefix length
     int commonPrefixLength = 0;
@@ -83,6 +87,7 @@ bool RadixTreeParallel<O>::insertRec(RadixNode<O>* node, const std::string& key,
         if (!node->trySetChild(index, node, newParentNode)) {
             delete splitNode;
             delete newParentNode;
+            std::cout << "failed split" << std::endl;
             return false;
         }
     }

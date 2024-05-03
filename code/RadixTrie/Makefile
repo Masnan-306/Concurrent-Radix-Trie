@@ -11,7 +11,7 @@ all: $(EXECUTABLES)
 RadixTrieConcurrentSearchTest: RadixTrieConcurrentSearchTest.cpp
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o RadixTrieConcurrentSearchTest RadixTrieConcurrentSearchTest.cpp
 
-RadixTrieTest: RadixTrieTest.cpp
+RadixTrieTest: RadixTrieTest.cpp RadixTrieLockFree.tpp RadixTrieLockFineLock.cpp
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o RadixTrieTest RadixTrieTest.cpp
 
 RadixTrieBulkInsertTest: RadixTrieBulkInsertTest.cpp

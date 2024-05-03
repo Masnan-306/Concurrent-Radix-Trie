@@ -1,5 +1,5 @@
 // RadixTrieTest.cpp
-#include "RadixTrieLockFree.h"
+#include "RadixTrieLockFineLock.h"
 #include <iostream>
 #include <thread>
 #include <vector>
@@ -7,7 +7,6 @@
 void testInsertAndSearch() {
     RadixTreeParallel<int> tree;
     tree.put("apple", 10);
-
     bool test1 = (tree.getValueForExactKey("apple") == 10);
     bool test2 = (tree.getValueForExactKey("app") == int());
 
@@ -77,7 +76,6 @@ void testSearchNonExistingKey() {
 void testEdgeCases() {
     RadixTreeParallel<int> tree;
     tree.put("i", 0);
-    std::cout << "Checking insertion of 'example': " << std::endl;
     tree.put("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", 1);
 
     bool test1 = (tree.getValueForExactKey("i") == 0);
@@ -104,6 +102,8 @@ void testReorderedPuts() {
     tree.put("app", 9);
     tree.put("ape", 9);
     tree.put("apple", 10);
+
+    tree.print();
 
     bool test = (tree.getValueForExactKey("app") == 9);
 
