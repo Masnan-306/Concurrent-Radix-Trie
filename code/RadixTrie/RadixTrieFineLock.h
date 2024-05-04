@@ -41,6 +41,8 @@ public:
     // Thread-safe method to retrieve all key-value pairs where prefix is in the key
     std::vector<std::pair<std::string, O>> collectPairs(const std::string& prefix) const;
 
+    void removeKey(const std::string& key);
+
     void print() const;
 };
 

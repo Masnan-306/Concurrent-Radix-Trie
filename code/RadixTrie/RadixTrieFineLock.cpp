@@ -84,7 +84,7 @@ O RadixTreeParallel<O>::getValueForExactKey(const std::string& key) {
             }
         }
 
-        if (commonPrefixLength < node->key.length() || depth + commonPrefixLength >= key.length()) {
+        if (commonPrefixLength < node->key.length()) {
             break;
         }
 
@@ -184,4 +184,54 @@ template <typename O>
 void RadixTreeParallel<O>::print() const {
     std::cout << "Radix Trie Structure:" << std::endl;
     printTree(root, "", "");
+}
+
+template <typename O>
+int countChildren(RadixNode<O>* node) {
+    int count = 0;
+    for (int i = 0; i < 26; i++) {
+        if (node->children[i]) {
+            count++;
+        }
+    }
+    return count;
+}
+
+template <typename O>
+void RadixTreeParallel<O>::removeKey(const std::string& key) {
+    RadixNode<O>* node = root;
+    RadixNode<O>* parent = root;
+    int depth = 0;
+
+    while (node) {
+        std::lock_guard<std::mutex> lock(node->nodeMutex);
+
+        if (depth == key.length() && node->isTerminal) {
+            node->isTerminal = false;
+            node->value = O();
+
+            // Compress two nodes
+            if (countChildren(parent) == 1 && parent->isTerminal == false) {
+                parent->key += node->key;
+                parent->children = node->children;
+            }
+            return;
+        }
+
+        int commonPrefixLength = 0;
+        while (commonPrefixLength < node->key.length() && commonPrefixLength + depth < key.length() && node->key[commonPrefixLength] == key[depth + commonPrefixLength]) {
+            ++commonPrefixLength;
+        }
+
+        if (commonPrefixLength < node->key.length()) {
+            std::cerr << "Key not found" << std::endl;
+            return;
+        }
+
+        int index = key[depth + commonPrefixLength] - 'a';
+        node = node->children[index];
+        parent = node;
+        depth += commonPrefixLength;
+    }
+    std::cerr << "Key not found" << std::endl;
 }
