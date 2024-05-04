@@ -35,11 +35,13 @@ int main() {
 
     const auto compute_start = std::chrono::steady_clock::now();
     #pragma omp parallel for schedule(dynamic)
-    for (int i = 0; i < words.size(); i++) {
-        for (int j = 0; j< 30; j++){
+    for (int j = 0; j< 30; j++) {
+        for (int i = 0; i < words.size(); i++) {
             trie.put(words[i], 1);
         }
     }
+
+    #pragma omp barrier
 
     std::cout << "Inserted " << words.size() << " words into the Radix Trie using " << numThreads << " threads." << std::endl;
 
@@ -62,7 +64,7 @@ int main() {
     }
 
     std::cout << "Performed " << numTests << " random access tests, with " << failedCount << " failures." << std::endl;
-
+    // trie.print();
     const double compute_time = std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now() - compute_start).count();
     std::cout << "Computation time (sec): " << compute_time << '\n';
 

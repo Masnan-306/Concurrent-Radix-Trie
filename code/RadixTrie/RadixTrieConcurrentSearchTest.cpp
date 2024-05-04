@@ -3,7 +3,7 @@
 #include <vector>
 #include <map>
 #include <mutex>
-#include "RadixTrieCoarseLock.h"
+#include "RadixTrieLockFree.h"
 
 template <typename O>
 void searchForKey(RadixTreeParallel<O>& tree, const std::string& key, std::map<std::string, O>& results, std::mutex& resultsMutex) {
@@ -11,7 +11,6 @@ void searchForKey(RadixTreeParallel<O>& tree, const std::string& key, std::map<s
         O value = tree.getValueForExactKey(key);
         std::lock_guard<std::mutex> lock(resultsMutex);
         results[key] = value;
-        // std::cout << "Search result for key '" << key << "': " << value << std::endl;
     } catch (const std::exception& e) {
         std::cerr << "Exception occurred: " << e.what() << std::endl;
     }
