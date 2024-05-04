@@ -1,33 +1,29 @@
-# Compiler
-CXX = g++
+CXX = /usr/local/opt/llvm/bin/clang++
+CXXFLAGS = -std=c++17 -Wall -I. -g -fopenmp
+LDFLAGS = -L/usr/local/opt/llvm/lib
+CPPFLAGS = -I/usr/local/opt/llvm/include
 
-# Compiler flags
-CXXFLAGS = -Wall -std=c++11 -Icode/radix  # Include directory for headers
+# Define all executables
+EXECUTABLES = RadixTrieConcurrentSearchTest RadixTrieTest RadixTrieBulkInsertTest
 
-# Directories
-CODE_DIR = code/radix
-TEST_DIR = tests/correctness
+all: $(EXECUTABLES)
 
-# Source files
-SRC = $(CODE_DIR)/RadixTrie.cpp
+RadixTrieConcurrentSearchTest: tests/correctness/RadixTrieConcurrentSearchTest.cpp
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o RadixTrieConcurrentSearchTest tests/correctness/RadixTrieConcurrentSearchTest.cpp
 
-# Object files
-OBJ = $(SRC:.cpp=.o)
+RadixTrieTest: tests/correctness/RadixTrieTest.cpp
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o RadixTrieTest tests/correctness/RadixTrieTest.cpp
 
-# Target executable
-TARGET = $(TEST_DIR)/test
+RadixTrieBulkInsertTest: tests/correctness/RadixTrieBulkInsertTest.cpp
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o RadixTrieBulkInsertTest tests/correctness/RadixTrieBulkInsertTest.cpp
 
-# Default target to compile and link
-all: $(TARGET)
+run_tests: $(EXECUTABLES)
+	./RadixTrieConcurrentSearchTest
+	./RadixTrieTest
+	./RadixTrieBulkInsertTest
 
-# Rule to create object files
-$(OBJ): $(SRC)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
-
-# Rule to link everything into an executable
-$(TARGET): $(OBJ) $(TEST_DIR)/test.cpp
-	$(CXX) $(CXXFLAGS) $(OBJ) $(TEST_DIR)/test.cpp -o $(TARGET)
-
-# Clean up object files and executables
 clean:
-	rm -f $(OBJ) $(TARGET)
+	rm -f $(EXECUTABLES)
+	find . -name "*.dSYM" -type d -exec rm -rf {} +
+
+.PHONY: all run_tests clean

@@ -6,12 +6,12 @@
 #include <chrono>
 #include <random>
 
-#include "RadixTrieLockFree.h"
+#include "code/RadixTrie/RadixTrieLockFree.h"
 
 int main() {
     const auto init_start = std::chrono::steady_clock::now();
     RadixTreeParallel<int> trie;
-    std::ifstream file("../../tests/time/words/hard_filtered_words.txt");
+    std::ifstream file("./tests/time/words/hard_filtered_words.txt");
     std::vector<std::string> words;
 
     if (!file) {
