@@ -48,10 +48,6 @@ bool RadixTreeParallel<O>::insertHelper(RadixNode<O>* root, const std::string& k
             auto newNodeBottom  = new RadixNode<O>(node->key.substr(commonPrefixLength), node->value, node->isTerminal);
             newNodeBottom->children = node->children;  // Transfer children
 
-            // std::cout << "input key: " + key << std::endl;
-            // std::cout << "top key: " + newNodeTop->key << std::endl;
-            // std::cout << "bottom key: " + newNodeBottom->key << std::endl;
-
             // Perform atomic update on child
             newNodeTop->trySetChild(index, nullptr, newNodeBottom);
             if (!parent->trySetChild(node->key[0] - 'a', node, newNodeTop)){
@@ -120,6 +116,69 @@ O RadixTreeParallel<O>::getValueForExactKey(const std::string& key) {
 
     return O(); // Return default-constructed object if the key is not found
 }
+
+template <typename O>
+std::vector<std::pair<std::string, O>> RadixTreeParallel<O>::collectPairs(const std::string& prefix) const {
+    std::vector<std::pair<std::string, O>> pairs;
+
+    RadixNode<O>* node = root;
+    int depth = 0;
+
+    // Traverse down the trie to the node corresponding to the prefix
+    while (node) {
+        depth += node->key.length();
+
+        if (depth > prefix.length()) {
+            return pairs;
+        }
+        
+        if (depth == prefix.length()) {
+            break;
+        }
+
+        int index = prefix[depth] - 'a';
+        node = node->getChild(index);
+    }
+
+    // If the prefix doesn't exist in the trie, return empty pairs
+    if (!node) {
+        return pairs;
+    }
+
+    // Perform depth-first traversal to collect pairs
+    collectPairsDFS(node, prefix, pairs);
+
+    return pairs;
+}
+
+template <typename O>
+void RadixTreeParallel<O>::collectPairsDFS(RadixNode<O>* node, const std::string& prefix, std::vector<std::pair<std::string, O>>& pairs) const {
+    std::stack<std::pair<RadixNode<O>*, std::string>> nodeStack;
+    nodeStack.push({node, prefix});
+
+    while (!nodeStack.empty()) {
+        auto [currentNode, currentPrefix] = nodeStack.top();
+        nodeStack.pop();
+
+        // If the current node is a terminal node, add its key-value pair to the result
+        if (currentNode->isTerminal) {
+            pairs.emplace_back(currentPrefix + currentNode->key, currentNode->value);
+        }
+
+        // Traverse all child nodes and push them onto the stack
+        for (int i = 0; i < 26; i++) {
+            if (currentNode->getChild(i)) {
+                std::string childPrefix = currentPrefix + currentNode->key;
+                nodeStack.push({currentNode->getChild(i), childPrefix});
+            }
+        }
+    }
+}
+
+
+// --------------
+// Debug Function
+// --------------
 
 template <typename O>
 void RadixTreeParallel<O>::printTree(RadixNode<O>* node, const std::string& prefix, const std::string& childPrefix) const {

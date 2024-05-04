@@ -1,5 +1,5 @@
 // RadixTrieTest.cpp
-#include "code/RadixTrie/RadixTrieLockFree.h"
+#include "code/RadixTrie/RadixTrieFineLock.h"
 #include <iostream>
 #include <thread>
 #include <vector>
@@ -16,43 +16,31 @@ void testInsertAndSearch() {
 }
 
 
-// void testCollectPairs() {
-//     RadixTree<int> tree;
-//     tree.put("apple", 10);
-//     tree.put("app", 5);
-//     tree.put("ape", 7);
+void testCollectPairs() {
+    RadixTreeParallel<int> tree;
+    tree.put("apple", 10);
+    tree.put("app", 5);
+    tree.put("ape", 7);
 
-//     auto pairs = tree.collectPairs("ap");
-//     bool test = (pairs.size() == 3);
+    auto pairs = tree.collectPairs("ap");
+    bool test = (pairs.size() == 3);
 
-//     std::cout << "Test Collect Pairs: "
-//               << (test ? "PASSED" : "FAILED!!!") << std::endl;
-// }
+    std::cout << "Test Collect Pairs: "
+              << (test ? "PASSED" : "FAILED!!!") << std::endl;
+}
 
-// void testGetKeysStartingWith() {
-//     RadixTree<int> tree;
-//     tree.put("apple", 10);
-//     tree.put("app", 5);
+void testNoPairs() {
+    RadixTreeParallel<int> tree;
+    tree.put("apple", 10);
+    tree.put("app", 5);
+    tree.put("ape", 7);
 
-//     auto keys = tree.getKeysStartingWith("app");
-//     bool test = (keys.size() == 2 && find(keys.begin(), keys.end(), "apple") != keys.end() && find(keys.begin(), keys.end(), "app") != keys.end());
+    auto pairs = tree.collectPairs("bp");
+    bool test = (pairs.size() == 0);
 
-//     std::cout << "Test Get Keys Starting With: "
-//               << (test ? "PASSED" : "FAILED!!!") << std::endl;
-// }
-
-// void testNoPairs() {
-//     RadixTree<int> tree;
-//     tree.put("apple", 10);
-//     tree.put("app", 5);
-//     tree.put("ape", 7);
-
-//     auto pairs = tree.collectPairs("bp");
-//     bool test = (pairs.size() == 0);
-
-//     std::cout << "Test Collect 0 Pairs: "
-//               << (test ? "PASSED" : "FAILED!!!") << std::endl;
-// }
+    std::cout << "Test Collect None-existing Pairs: "
+              << (test ? "PASSED" : "FAILED!!!") << std::endl;
+}
 
 void testUpdateExistingKey() {
     RadixTreeParallel<int> tree;
@@ -121,7 +109,6 @@ void testReorderedPuts() {
 
 void threadPutTask(RadixTreeParallel<int>& tree, const std::string& key, int value) {
     tree.put(key, value);
-    // std::cout << "Inserted (" << key << ", " << value << ")\n";
 }
 
 void testConcurrentPuts() {
@@ -137,8 +124,6 @@ void testConcurrentPuts() {
     for (auto& thread : threads) {
         thread.join();
     }
-
-    // tree.print();
 
     // Test consistency after all threads have finished
     bool test = (tree.getValueForExactKey("apple") == 10) &&
@@ -202,7 +187,7 @@ void testConcurrentRace() {
                 (tree.getValueForExactKey("aimmi") == 1) &&
                 (tree.getValueForExactKey("apg") == 1);
 
-    std::cout << "Test Concurrent Puts: "
+    std::cout << "Test Larger Concurrent Puts: "
               << (test ? "PASSED" : "FAILED!!!") << std::endl;
     
 }
@@ -300,9 +285,8 @@ void testStaggeredInserts() {
 
 int main() {
     
-    // testCollectPairs();
-    // testGetKeysStartingWith();
-    // testNoPairs();
+    testCollectPairs();
+    testNoPairs();
 
     testInsertAndSearch();
     testUpdateExistingKey();

@@ -27,7 +27,8 @@ private:
     RadixNode<O>* root;
     void insertIterative(RadixNode<O>* node, const std::string& key, const O& value);
     void printTree(RadixNode<O>* node, const std::string& prefix, const std::string& childPrefix) const;
-    
+    void collectPairsDFS(RadixNode<O>* node, const std::string& prefix, std::vector<std::pair<std::string, O>>& pairs) const;
+
 public:
     RadixTreeParallel() : root(new RadixNode<O>("")) {}
 
@@ -37,9 +38,12 @@ public:
     // Thread-safe method to retrieve the value for a given key
     O getValueForExactKey(const std::string& key);
 
+    // Thread-safe method to retrieve all key-value pairs where prefix is in the key
+    std::vector<std::pair<std::string, O>> collectPairs(const std::string& prefix) const;
+
     void print() const;
 };
 
-#include "RadixTrieLockFineLock.cpp"
+#include "RadixTrieFineLock.cpp"
 
 #endif // RADIX_TRIE_LOCK_H

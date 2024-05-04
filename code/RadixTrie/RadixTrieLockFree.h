@@ -27,6 +27,7 @@ private:
     std::atomic<RadixNode<O>*> root;
     void printTree(RadixNode<O>* node, const std::string& prefix, const std::string& childPrefix) const;
     bool insertHelper(RadixNode<O>* node, const std::string& key, const O& value);
+    void collectPairsDFS(RadixNode<O>* node, const std::string& prefix, std::vector<std::pair<std::string, O>>& pairs) const;
 
 public:
     RadixTreeParallel() : root(new RadixNode<O>("")) {}
@@ -34,6 +35,7 @@ public:
     // Lock-free insert method
     void put(const std::string& key, const O& value);
     O getValueForExactKey(const std::string& key);
+    std::vector<std::pair<std::string, O>> collectPairs(const std::string& prefix) const;
     void print() const;
 };
 
