@@ -42,26 +42,26 @@ int main() {
 
     const auto compute_start = std::chrono::steady_clock::now();
 
-    #pragma omp parallel for schedule(dynamic)
-    for (int j = 0; j< 60; j++) {
-        if (j%2 == 0){
-            for (int i = 0; i < words.size(); i++) {
-                trie.put(words[i], 1);
-            }
-        } else{
-            for (int i = words.size() - 1; i >= 0; i--) {
-                int index = distrib(gen);
-                trie.getValueForExactKey(words[index]);
-            }
-        }
-    }
-
     // #pragma omp parallel for schedule(dynamic)
-    // for (int j = 0; j< 30; j++) {
-    //     for (int i = words.size() - 1; i >= 0; i--) {
-    //         trie.put(words[i], 1);
+    // for (int j = 0; j< 60; j++) {
+    //     if (j%2 == 0){
+    //         for (int i = 0; i < words.size(); i++) {
+    //             trie.put(words[i], 1);
+    //         }
+    //     } else{
+    //         for (int i = words.size() - 1; i >= 0; i--) {
+    //             int index = distrib(gen);
+    //             trie.getValueForExactKey(words[index]);
+    //         }
     //     }
     // }
+
+    #pragma omp parallel for schedule(dynamic)
+    for (int j = 0; j< 30; j++) {
+        for (int i = words.size() - 1; i >= 0; i--) {
+            trie.put(words[i], 1);
+        }
+    }
 
     #pragma omp barrier
 
@@ -71,26 +71,26 @@ int main() {
     // const auto insert_time = std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now() - compute_start).count();
     // std::cout << "Insertion time (sec): " << insert_time << '\n';
 
-    // const auto compute_start2 = std::chrono::steady_clock::now();
-    // // Random test access
+    const auto compute_start2 = std::chrono::steady_clock::now();
+    // Random test access
  
 
-    // const int numTests = 100000; // Number of random tests
-    // // int failedCount = 0;
+    const int numTests = 100000; // Number of random tests
+    // int failedCount = 0;
 
-    // for(int j=0; j<30; j++)
-    // {
-    //     #pragma omp parallel for schedule(dynamic)
-    //     for (int i = 0; i < numTests; i++) {
-    //         int index = distrib(gen);
-    //         trie.getValueForExactKey(words[index]);
-    //         // if (trie.getValueForExactKey(words[index]) != 1) {
-    //         //     std::cerr << "Test failed for word: " << words[index] << std::endl;
-    //         //     failedCount++;
-    //         // }
-    //     }
-    // }
-    // const auto search_time = std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now() - compute_start2).count();
-    // std::cout << "Search time (sec): " << search_time << '\n';
+    for(int j=0; j<30; j++)
+    {
+        #pragma omp parallel for schedule(dynamic)
+        for (int i = 0; i < numTests; i++) {
+            int index = distrib(gen);
+            trie.getValueForExactKey(words[index]);
+            // if (trie.getValueForExactKey(words[index]) != 1) {
+            //     std::cerr << "Test failed for word: " << words[index] << std::endl;
+            //     failedCount++;
+            // }
+        }
+    }
+    const auto search_time = std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now() - compute_start2).count();
+    std::cout << "Search time (sec): " << search_time << '\n';
     return 0;
 }

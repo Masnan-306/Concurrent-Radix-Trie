@@ -11,7 +11,7 @@ void RadixTreeParallel<O>::insertIterative(RadixNode<O>* root, const std::string
 
     while (true) {
 
-        std::lock_guard<std::mutex> lock(node->nodeMutex);  // Lock each node as we traverse
+        // std::lock_guard<std::mutex> lock(node->nodeMutex);  // Lock each node as we traverse
 
         // Compute common prefix length
         int commonPrefixLength = 0;
@@ -65,7 +65,7 @@ O RadixTreeParallel<O>::getValueForExactKey(const std::string& key) {
     int depth = 0;
 
     while (node) {
-        std::lock_guard<std::mutex> lock(node->nodeMutex); // Lock each node as we traverse
+        // std::lock_guard<std::mutex> lock(node->nodeMutex); // Lock each node as we traverse
 
         if (depth == key.length() && node->isTerminal) {
             return node->value;
@@ -106,7 +106,7 @@ std::vector<std::pair<std::string, O>> RadixTreeParallel<O>::collectPairs(const 
 
     // Traverse down the trie to the node corresponding to the prefix
     while (node) {
-        std::lock_guard<std::mutex> lock(node->nodeMutex);
+        // std::lock_guard<std::mutex> lock(node->nodeMutex);
 
         depth += node->key.length();
 
@@ -142,7 +142,7 @@ void RadixTreeParallel<O>::collectPairsDFS(RadixNode<O>* node, const std::string
         auto [currentNode, currentPrefix] = nodeStack.top();
         nodeStack.pop();
 
-        std::lock_guard<std::mutex> lock(currentNode->nodeMutex);
+        // std::lock_guard<std::mutex> lock(currentNode->nodeMutex);
 
         // If the current node is a terminal node, add its key-value pair to the result
         if (currentNode->isTerminal) {
@@ -200,10 +200,10 @@ void testAndRemoveNode(RadixNode<O>* node, RadixNode<O>* parent) {
     // Remove node if its number of children <= 1
     // Coalesce node's key with child's key if there is a child
     if (count == 1) {
-        child->nodeMutex.lock();
+        // child->nodeMutex.lock();
         child->key = node->key + child->key;
         parent->children[node->key[0] - 'a'] = child;
-        child->nodeMutex.unlock();
+        // child->nodeMutex.unlock();
     } else if (count == 0) {
         parent->children[node->key[0] - 'a'] = nullptr;
     }
@@ -229,7 +229,7 @@ void RadixTreeParallel<O>::testAndCoalesceChild(RadixNode<O>* node, RadixNode<O>
 
     // node under parent could be removed. If so, lock is needed
     if (child != node) {
-        child->nodeMutex.lock();
+        // child->nodeMutex.lock();
     }
 
     // Coalesce child with parent if there is only one child
@@ -239,7 +239,7 @@ void RadixTreeParallel<O>::testAndCoalesceChild(RadixNode<O>* node, RadixNode<O>
     parent->isTerminal = child->isTerminal;
 
     if (child != node) {
-        child->nodeMutex.unlock();
+        // child->nodeMutex.unlock();
     }
 }
 
@@ -248,12 +248,12 @@ void RadixTreeParallel<O>::removeKey(const std::string& key) {
     // std::cout << "Deleting " << key << std::endl;
     RadixNode<O>* node = root;
     RadixNode<O>* parent = new RadixNode<O>("");
-    parent->nodeMutex.lock();
+    // parent->nodeMutex.lock();
     int depth = 0;
 
     // Look for the terminated node
     while (node) {
-        node->nodeMutex.lock();
+        // node->nodeMutex.lock();
 
         int commonPrefixLength = 0;
         while (commonPrefixLength < node->key.length() && commonPrefixLength + depth < key.length() && node->key[commonPrefixLength] == key[depth + commonPrefixLength]) {
@@ -268,14 +268,14 @@ void RadixTreeParallel<O>::removeKey(const std::string& key) {
         // Halfway in a node, so key not exist
         if (commonPrefixLength < node->key.length()) {
             std::cout << "Key " << key << " not found" << std::endl;
-            node->nodeMutex.unlock();
-            parent->nodeMutex.unlock();
+            // node->nodeMutex.unlock();
+            // parent->nodeMutex.unlock();
             return;
         }         
 
         // Goes deeper into the trie since there must be trailig key
         int index = key[depth + commonPrefixLength] - 'a';
-        parent->nodeMutex.unlock();
+        // parent->nodeMutex.unlock();
         parent = node;
         node = node->children[index];
         depth += commonPrefixLength;
@@ -290,7 +290,7 @@ void RadixTreeParallel<O>::removeKey(const std::string& key) {
     }
 
     if (node) {
-        node->nodeMutex.unlock();
+        // node->nodeMutex.unlock();
     }
-    parent->nodeMutex.unlock();
+    // parent->nodeMutex.unlock();
 }
