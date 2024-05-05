@@ -1,6 +1,8 @@
 // RadixTrieLock.tpp
 #include "RadixTrieFineLock.h"
 #include <iostream>
+#include <vector>  // Required for std::vector
+#include <stack>   // Required for std::stack
 
 template <typename O>
 void RadixTreeParallel<O>::insertIterative(RadixNode<O>* root, const std::string& key, const O& value) {

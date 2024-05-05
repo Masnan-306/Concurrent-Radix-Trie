@@ -5,11 +5,14 @@
 #include <omp.h>
 #include <chrono>
 #include <random>
+#include <iomanip>
 
-#include "code/RadixTrie/RadixTrieLockFree.h"
+
+#include "code/RadixTrie/RadixTrieFineLock.h"
 
 int main() {
     const auto init_start = std::chrono::steady_clock::now();
+    // RadixTree<int> trie;
     RadixTreeParallel<int> trie;
     std::ifstream file("./tests/time/words/hard_filtered_words.txt");
     std::vector<std::string> words;
@@ -27,46 +30,67 @@ int main() {
     }
     file.close();
 
-    int numThreads = 4;
+    int numThreads = 8;
     omp_set_num_threads(numThreads);
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> distrib(0, words.size() - 1);
 
     const double init_time = std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now() - init_start).count();
     std::cout << "Initialization time (sec): " << std::fixed << std::setprecision(10) << init_time << '\n';
 
     const auto compute_start = std::chrono::steady_clock::now();
+
     #pragma omp parallel for schedule(dynamic)
-    for (int j = 0; j< 30; j++) {
-        for (int i = 0; i < words.size(); i++) {
-            trie.put(words[i], 1);
+    for (int j = 0; j< 60; j++) {
+        if (j%2 == 0){
+            for (int i = 0; i < words.size(); i++) {
+                trie.put(words[i], 1);
+            }
+        } else{
+            for (int i = words.size() - 1; i >= 0; i--) {
+                int index = distrib(gen);
+                trie.getValueForExactKey(words[index]);
+            }
         }
     }
+
+    // #pragma omp parallel for schedule(dynamic)
+    // for (int j = 0; j< 30; j++) {
+    //     for (int i = words.size() - 1; i >= 0; i--) {
+    //         trie.put(words[i], 1);
+    //     }
+    // }
 
     #pragma omp barrier
 
-    std::cout << "Inserted " << words.size() << " words into the Radix Trie using " << numThreads << " threads." << std::endl;
+    const auto insert_time = std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now() - compute_start).count();
+    std::cout << "Insertion time (sec): " << insert_time << '\n';
+    // std::cout << "Inserted " << words.size() << " words into the Radix Trie using " << numThreads << " threads." << std::endl;
+    // const auto insert_time = std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now() - compute_start).count();
+    // std::cout << "Insertion time (sec): " << insert_time << '\n';
 
-    // Random test access
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distrib(0, words.size() - 1);
+    // const auto compute_start2 = std::chrono::steady_clock::now();
+    // // Random test access
+ 
 
-    const int numTests = 100000; // Number of random tests
-    int failedCount = 0;
+    // const int numTests = 100000; // Number of random tests
+    // // int failedCount = 0;
 
-    #pragma omp parallel for reduction(+:failedCount) schedule(dynamic)
-    for (int i = 0; i < numTests; i++) {
-        int index = distrib(gen);
-        // trie.getValueForExactKey(words[index]);
-        if (trie.getValueForExactKey(words[index]) != 1) {
-            std::cerr << "Test failed for word: " << words[index] << std::endl;
-            failedCount++;
-        }
-    }
-
-    std::cout << "Performed " << numTests << " random access tests, with " << failedCount << " failures." << std::endl;
-    // trie.print();
-    const double compute_time = std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now() - compute_start).count();
-    std::cout << "Computation time (sec): " << compute_time << '\n';
-
+    // for(int j=0; j<30; j++)
+    // {
+    //     #pragma omp parallel for schedule(dynamic)
+    //     for (int i = 0; i < numTests; i++) {
+    //         int index = distrib(gen);
+    //         trie.getValueForExactKey(words[index]);
+    //         // if (trie.getValueForExactKey(words[index]) != 1) {
+    //         //     std::cerr << "Test failed for word: " << words[index] << std::endl;
+    //         //     failedCount++;
+    //         // }
+    //     }
+    // }
+    // const auto search_time = std::chrono::duration_cast<std::chrono::duration<double>>(std::chrono::steady_clock::now() - compute_start2).count();
+    // std::cout << "Search time (sec): " << search_time << '\n';
     return 0;
 }

@@ -1,7 +1,10 @@
-CXX = /usr/local/opt/llvm/bin/clang++
+# Use g++ instead of clang++
+CXX = g++
+
+# Compiler and linker flags remain mostly the same; adjust paths if needed
 CXXFLAGS = -std=c++17 -Wall -I. -g -fopenmp
-LDFLAGS = -L/usr/local/opt/llvm/lib
-CPPFLAGS = -I/usr/local/opt/llvm/include
+LDFLAGS = -L/usr/local/lib
+CPPFLAGS = -I/usr/local/include
 
 # Define source files and corresponding object files
 SRCS = $(wildcard code/RadixTrie/*.cpp)

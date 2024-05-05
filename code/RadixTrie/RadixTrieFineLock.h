@@ -5,6 +5,8 @@
 #include <array>
 #include <memory>
 #include <string>
+#include <vector>  // Required for std::vector
+#include <stack>   // Required for std::stack
 
 template <typename O>
 class RadixNode {
