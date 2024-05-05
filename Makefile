@@ -3,27 +3,35 @@ CXXFLAGS = -std=c++17 -Wall -I. -g -fopenmp
 LDFLAGS = -L/usr/local/opt/llvm/lib
 CPPFLAGS = -I/usr/local/opt/llvm/include
 
-# Define all executables
-EXECUTABLES = RadixTrieConcurrentSearchTest RadixTrieTest RadixTrieBulkInsertTest
+# Define source files and corresponding object files
+SRCS = $(wildcard code/RadixTrie/*.cpp)
+OBJS = $(SRCS:.cpp=.o)
 
-all: $(EXECUTABLES)
+# Define test files and corresponding executable names
+TEST_SRCS = $(wildcard tests/correctness/*.cpp)
+TEST_EXECUTABLES = $(TEST_SRCS:.cpp=)
 
-RadixTrieConcurrentSearchTest: tests/correctness/RadixTrieConcurrentSearchTest.cpp
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o RadixTrieConcurrentSearchTest tests/correctness/RadixTrieConcurrentSearchTest.cpp
+# Default target, builds all executables
+all: $(TEST_EXECUTABLES)
 
-RadixTrieTest: tests/correctness/RadixTrieTest.cpp
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o RadixTrieTest tests/correctness/RadixTrieTest.cpp
+# Rule to build executables from test source files
+%: %.cpp $(OBJS)
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o $@ $^
 
-RadixTrieBulkInsertTest: tests/correctness/RadixTrieBulkInsertTest.cpp
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(LDFLAGS) -o RadixTrieBulkInsertTest tests/correctness/RadixTrieBulkInsertTest.cpp
+# Rule to build object files from source files
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
 
-run_tests: $(EXECUTABLES)
-	./RadixTrieConcurrentSearchTest
-	./RadixTrieTest
-	./RadixTrieBulkInsertTest
+# Phony target to run all tests
+run_tests: $(TEST_EXECUTABLES)
+	@for test_exec in $(TEST_EXECUTABLES); do \
+		echo "Running $$test_exec..."; \
+		./$$test_exec; \
+	done
 
+# Clean target
 clean:
-	rm -f $(EXECUTABLES)
+	rm -f $(OBJS) $(TEST_EXECUTABLES)
 	find . -name "*.dSYM" -type d -exec rm -rf {} +
 
 .PHONY: all run_tests clean

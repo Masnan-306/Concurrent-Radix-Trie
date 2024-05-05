@@ -28,6 +28,7 @@ private:
     void insertIterative(RadixNode<O>* node, const std::string& key, const O& value);
     void printTree(RadixNode<O>* node, const std::string& prefix, const std::string& childPrefix) const;
     void collectPairsDFS(RadixNode<O>* node, const std::string& prefix, std::vector<std::pair<std::string, O>>& pairs) const;
+    void testAndCoalesceChild(RadixNode<O>* node, RadixNode<O>* parent);
 
 public:
     RadixTreeParallel() : root(new RadixNode<O>("")) {}

@@ -42,6 +42,92 @@ void testNoPairs() {
               << (test ? "PASSED" : "FAILED!!!") << std::endl;
 }
 
+void testDelete1() {
+    RadixTreeParallel<int> tree;
+    tree.put("apple", 10);
+    tree.put("app", 5);
+    tree.put("ape", 7);
+
+    tree.removeKey("apple");
+    tree.removeKey("app");
+
+    bool test = (tree.getValueForExactKey("apple") == 0) && 
+                (tree.getValueForExactKey("app") == 0) &&
+                (tree.getValueForExactKey("ape") == 7);
+
+    std::cout << "Test Delete1: "
+              << (test ? "PASSED" : "FAILED!!!") << std::endl;
+}
+
+void testDelete2() {
+    RadixTreeParallel<int> tree;
+    tree.put("apple", 10);
+    tree.put("applet", 5);
+    tree.put("application", 7);
+
+    tree.removeKey("apple");
+    tree.removeKey("applet");
+
+    bool test = (tree.getValueForExactKey("apple") == 0) && 
+                (tree.getValueForExactKey("applet") == 0) &&
+                (tree.getValueForExactKey("application") == 7);
+
+    std::cout << "Test Delete2: "
+              << (test ? "PASSED" : "FAILED!!!") << std::endl;
+}
+
+void testDelete3() {
+    RadixTreeParallel<int> tree;
+    tree.put("apple", 10);
+    tree.put("application", 7);
+
+    tree.removeKey("apple");
+
+    bool test = (tree.getValueForExactKey("apple") == 0) && 
+                (tree.getValueForExactKey("application") == 7);
+
+    std::cout << "Test Delete3: "
+              << (test ? "PASSED" : "FAILED!!!") << std::endl;
+    
+    // tree.print();
+}
+
+void testDelete4() {
+    RadixTreeParallel<int> tree;
+    tree.put("apple", 10);
+    tree.put("applet", 5);
+    tree.put("application", 7);
+
+    tree.removeKey("apple");
+
+    bool test = (tree.getValueForExactKey("apple") == 0) && 
+                (tree.getValueForExactKey("applet") == 5) &&
+                (tree.getValueForExactKey("application") == 7);
+
+    std::cout << "Test Delete4: "
+              << (test ? "PASSED" : "FAILED!!!") << std::endl;
+    
+    // tree.print();
+}
+
+void testDelete5() {
+    RadixTreeParallel<int> tree;
+    tree.put("apple", 9);
+    tree.put("applet", 9);
+    tree.put("applek", 10);
+
+    tree.removeKey("apple");
+
+    bool test = (tree.getValueForExactKey("applet") == 9)
+                && (tree.getValueForExactKey("applek") == 10)
+                && (tree.getValueForExactKey("apple") == 0);
+
+    std::cout << "Test Search for Reordered Inserts: "
+              << (test ? "PASSED" : "FAILED!!!") << std::endl;
+
+    // tree.print();
+}
+
 void testUpdateExistingKey() {
     RadixTreeParallel<int> tree;
     tree.put("apple", 10);
@@ -110,6 +196,15 @@ void testReorderedPuts() {
 void threadPutTask(RadixTreeParallel<int>& tree, const std::string& key, int value) {
     tree.put(key, value);
 }
+
+void threadDeleteTask(RadixTreeParallel<int>& tree, const std::string& key) {
+    tree.removeKey(key);
+}
+
+void threadGetValueTask(RadixTreeParallel<int>& tree, const std::string& key) {
+    tree.getValueForExactKey(key);
+}
+
 
 void testConcurrentPuts() {
     RadixTreeParallel<int> tree;
@@ -282,6 +377,107 @@ void testStaggeredInserts() {
               << (testPassed ? "PASSED" : "FAILED!!!") << std::endl;
 }
 
+void testConcurrentDelete() {
+    RadixTreeParallel<int> tree;
+    std::vector<std::thread> threads;
+
+    // Insert keys with overlapping prefixes
+    threads.push_back(std::thread(threadPutTask, std::ref(tree), "apple", 10));
+    threads.push_back(std::thread(threadPutTask, std::ref(tree), "applet", 15));
+    threads.push_back(std::thread(threadPutTask, std::ref(tree), "application", 20));
+    threads.push_back(std::thread(threadPutTask, std::ref(tree), "apparatus", 25));
+
+    for (auto& thread : threads) {
+        if (thread.joinable()){
+            thread.join();
+        }
+    }
+    // Delete keys with overlapping prefixes
+    threads.push_back(std::thread(threadDeleteTask, std::ref(tree), "apple"));
+    threads.push_back(std::thread(threadDeleteTask, std::ref(tree), "applet"));
+    threads.push_back(std::thread(threadDeleteTask, std::ref(tree), "application"));
+    threads.push_back(std::thread(threadDeleteTask, std::ref(tree), "apparatus"));
+
+    for (auto& thread : threads) {
+        if (thread.joinable()){
+            thread.join();
+        }
+    }
+
+    // Verification
+    bool test = (tree.getValueForExactKey("apple") == 0) &&
+                (tree.getValueForExactKey("applet") == 0) &&
+                (tree.getValueForExactKey("application") == 0) &&
+                (tree.getValueForExactKey("apparatus") == 0);
+    
+    tree.print();
+    
+    std::cout << "Test Concurrent Delete Keys: "
+              << (test ? "PASSED" : "FAILED!!!") << std::endl;
+}
+
+void testConcurrentDeleteLarge() {
+    RadixTreeParallel<int> tree;
+    std::vector<std::thread> threads;
+
+    // Insert keys with overlapping prefixes
+    threads.push_back(std::thread(threadPutTask, std::ref(tree), "apple", 10));
+    threads.push_back(std::thread(threadPutTask, std::ref(tree), "applet", 15));
+    threads.push_back(std::thread(threadPutTask, std::ref(tree), "application", 20));
+    threads.push_back(std::thread(threadPutTask, std::ref(tree), "apparatus", 25));
+
+    for (auto& thread : threads) {
+        if (thread.joinable()){
+            thread.join();
+        }
+    }
+
+    // Delete keys with overlapping prefixes
+    threads.push_back(std::thread(threadDeleteTask, std::ref(tree), "apple"));
+    threads.push_back(std::thread(threadDeleteTask, std::ref(tree), "applet"));
+    threads.push_back(std::thread(threadDeleteTask, std::ref(tree), "application"));
+    threads.push_back(std::thread(threadDeleteTask, std::ref(tree), "apparatus"));
+
+    // // Additional concurrent delete tests
+    threads.push_back(std::thread(threadDeleteTask, std::ref(tree), "nonexistentkeya"));
+    threads.push_back(std::thread(threadDeleteTask, std::ref(tree), "nonexistentkeyb"));
+
+    threads.push_back(std::thread(threadPutTask, std::ref(tree), "threadkeya", 30));
+    threads.push_back(std::thread(threadPutTask, std::ref(tree), "threadkeyb", 35));
+    threads.push_back(std::thread(threadPutTask, std::ref(tree), "threadkeyc", 40));
+
+    threads.push_back(std::thread(threadDeleteTask, std::ref(tree), "threadkeya"));
+    threads.push_back(std::thread(threadDeleteTask, std::ref(tree), "threadkeyb"));
+    threads.push_back(std::thread(threadDeleteTask, std::ref(tree), "threadkeyc"));
+
+    threads.push_back(std::thread(threadPutTask, std::ref(tree), "concurrentkeya", 45));
+    threads.push_back(std::thread(threadPutTask, std::ref(tree), "concurrentkeyb", 50));
+
+    threads.push_back(std::thread(threadDeleteTask, std::ref(tree), "concurrentkeya"));
+    threads.push_back(std::thread(threadDeleteTask, std::ref(tree), "concurrentkeyb"));
+
+    threads.push_back(std::thread(threadGetValueTask, std::ref(tree), "concurrentkeya"));
+    threads.push_back(std::thread(threadGetValueTask, std::ref(tree), "concurrentkeyb"));
+
+    for (auto& thread : threads) {
+        if (thread.joinable()){
+            thread.join();
+        }
+    }
+    
+
+    // Verification
+    bool test = (tree.getValueForExactKey("apple") == 0) &&
+                (tree.getValueForExactKey("applet") == 0) &&
+                (tree.getValueForExactKey("application") == 0) &&
+                (tree.getValueForExactKey("apparatus") == 0);
+
+    tree.print();
+
+    std::cout << "Test Concurrent Delete More Keys: "
+              << (test ? "PASSED" : "FAILED!!!") << std::endl;
+}
+
 
 int main() {
     
@@ -294,6 +490,12 @@ int main() {
     testEdgeCases();
     testSearchExistingLongerKey();
     testReorderedPuts();
+    testDelete1();
+    testDelete2();
+    testDelete3();
+    testDelete4();
+    testDelete5();
+    
 
     // Concurrent Tests
     testConcurrentPuts();
@@ -301,5 +503,9 @@ int main() {
     testConcurrentOverlappingPrefixes();
     testHighVolumeConcurrentAccess();
     testStaggeredInserts();
+
+    testConcurrentDelete();
+    testConcurrentDeleteLarge();
+
     return 0;
 }

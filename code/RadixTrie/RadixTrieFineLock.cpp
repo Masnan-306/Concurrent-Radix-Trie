@@ -52,8 +52,6 @@ void RadixTreeParallel<O>::insertIterative(RadixNode<O>* root, const std::string
     return;
 }
 
-
-
 template <typename O>
 void RadixTreeParallel<O>::put(const std::string& key, const O& value) {
     insertIterative(root, key, value);
@@ -187,51 +185,110 @@ void RadixTreeParallel<O>::print() const {
 }
 
 template <typename O>
-int countChildren(RadixNode<O>* node) {
+void testAndRemoveNode(RadixNode<O>* node, RadixNode<O>* parent) {
+    RadixNode<O>* child;
     int count = 0;
     for (int i = 0; i < 26; i++) {
         if (node->children[i]) {
+            child = node->children[i];
             count++;
         }
     }
-    return count;
+    
+    // Remove node if its number of children <= 1
+    // Coalesce node's key with child's key if there is a child
+    if (count == 1) {
+        child->nodeMutex.lock();
+        child->key = node->key + child->key;
+        parent->children[node->key[0] - 'a'] = child;
+        child->nodeMutex.unlock();
+    } else if (count == 0) {
+        parent->children[node->key[0] - 'a'] = nullptr;
+    }
+}
+
+template <typename O>
+void RadixTreeParallel<O>::testAndCoalesceChild(RadixNode<O>* node, RadixNode<O>* parent) {
+    // Count parent's number of children
+    RadixNode<O>* child;
+    int count = 0;
+    for (int i = 0; i < 26; i++) {
+        if (parent->children[i]) {
+            child = parent->children[i];
+            count++;
+        }
+    }
+    
+    // We don't need to coalesce because there is more than one child or
+    // We can not coalesce parent with its child because parent is terminated
+    if (count != 1 || parent->isTerminal || parent == root) {
+        return;
+    }
+
+    // node under parent could be removed. If so, lock is needed
+    if (child != node) {
+        child->nodeMutex.lock();
+    }
+
+    // Coalesce child with parent if there is only one child
+    parent->key += child->key;
+    parent->children = child->children;
+    parent->value = child->value;
+    parent->isTerminal = child->isTerminal;
+
+    if (child != node) {
+        child->nodeMutex.unlock();
+    }
 }
 
 template <typename O>
 void RadixTreeParallel<O>::removeKey(const std::string& key) {
+    // std::cout << "Deleting " << key << std::endl;
     RadixNode<O>* node = root;
-    RadixNode<O>* parent = root;
+    RadixNode<O>* parent = new RadixNode<O>("");
+    parent->nodeMutex.lock();
     int depth = 0;
 
+    // Look for the terminated node
     while (node) {
-        std::lock_guard<std::mutex> lock(node->nodeMutex);
-
-        if (depth == key.length() && node->isTerminal) {
-            node->isTerminal = false;
-            node->value = O();
-
-            // Compress two nodes
-            if (countChildren(parent) == 1 && parent->isTerminal == false) {
-                parent->key += node->key;
-                parent->children = node->children;
-            }
-            return;
-        }
+        node->nodeMutex.lock();
 
         int commonPrefixLength = 0;
         while (commonPrefixLength < node->key.length() && commonPrefixLength + depth < key.length() && node->key[commonPrefixLength] == key[depth + commonPrefixLength]) {
             ++commonPrefixLength;
         }
 
-        if (commonPrefixLength < node->key.length()) {
-            std::cerr << "Key not found" << std::endl;
-            return;
+        // Found the terminated node
+        if (commonPrefixLength + depth == key.length()) {
+            break;
         }
 
+        // Halfway in a node, so key not exist
+        if (commonPrefixLength < node->key.length()) {
+            std::cout << "Key " << key << " not found" << std::endl;
+            node->nodeMutex.unlock();
+            parent->nodeMutex.unlock();
+            return;
+        }         
+
+        // Goes deeper into the trie since there must be trailig key
         int index = key[depth + commonPrefixLength] - 'a';
-        node = node->children[index];
+        parent->nodeMutex.unlock();
         parent = node;
+        node = node->children[index];
         depth += commonPrefixLength;
     }
-    std::cerr << "Key not found" << std::endl;
+    
+    // Delete node and compress if necessary
+    if (node && node->isTerminal) {
+        node->isTerminal = false;
+        node->value = O();
+        testAndRemoveNode(node, parent);
+        testAndCoalesceChild(node, parent);
+    }
+
+    if (node) {
+        node->nodeMutex.unlock();
+    }
+    parent->nodeMutex.unlock();
 }
