@@ -10,6 +10,8 @@
 
 [Source Code](https://github.com/Masnan-306/masnan.github.io)
 
+[Final Report](https://github.com/Masnan-306/Concurrent-Radix-Trie/blob/main/Final%20Report.pdf)
+
 ## SUMMARY
 
 In this project, we plan to implement versions of parallel trie data structure with different programming models including Cuda and OpenMPI as well as with the lock-free variant. Also, we plan to bechmark their performances by measuring throughput and scalability.
